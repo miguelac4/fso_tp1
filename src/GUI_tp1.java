@@ -65,7 +65,7 @@ public class GUI_tp1 extends JFrame {
         	public void actionPerformed(ActionEvent e) {
         		bd.setRaio(Integer.parseInt(text_Raio.getText()));
         	}
-        });text_Raio.setColumns(1);
+        });text_Raio.setColumns(5);
         GridBagConstraints gbc_textField = new GridBagConstraints();
         gbc_textField.insets = new Insets(0,0,5,5);
         gbc_textField.fill = GridBagConstraints.HORIZONTAL;
@@ -236,6 +236,12 @@ public class GUI_tp1 extends JFrame {
         			Consola("Necessita de ligar o robot primeiro!");
         			return;
         		}
+        		try {
+        			bd.getRobot().Parar(true); 
+        			Consola("A parar o robot.");
+        		} catch (Exception ex) {
+        			Consola("Erro detetado ao tentar parar." + ex.getMessage());	
+		}
         	}
         });
         btnParar.setBackground(Color.RED);
@@ -280,12 +286,20 @@ public class GUI_tp1 extends JFrame {
         //BOTÃO --> TRÁS
         btnTras = new JButton("TRÁS");
         btnTras.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		if (!bd.isRobotAberto()) {
-        			Consola("Necessita de ligar o robot primeiro!");
-        			return;
-        		}
-        	}
+            public void actionPerformed(ActionEvent e) {
+                if (!bd.isRobotAberto()) {
+                    Consola("Necessita de ligar o robot primeiro!");
+                    return;
+                }
+
+                int distancia = bd.getDistancia();
+                if (distancia >= 10 && distancia <= 50) {
+                    bd.getRobot().Reta(-distancia);  // <<<<< nota o sinal negativo
+                    Consola("Fazer Marcha-atrás | Distância = " + distancia);
+                } else {
+                    Consola("Distância precisa de estar entre 10 e 50 cm");
+                }
+            }
         });
         btnTras.setBackground(Color.PINK);
         btnTras.setOpaque(true);
@@ -317,6 +331,15 @@ public class GUI_tp1 extends JFrame {
         
         //TO-DO --> MOVIMENTOS ALEATÓRIOS
         rdbtnNewRadioButton = new JRadioButton("Movimentos Aleatórios");
+        rdbtnNewRadioButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		if (!bd.isRobotAberto()) {
+        			rdbtnNewRadioButton.setSelected(false);
+        			Consola("Necessita de ligar o robot primeiro!");
+        			return;
+        		}
+        	}
+        });
         GridBagConstraints gbc_rdbtnNewRadioButton = new GridBagConstraints();
         gbc_rdbtnNewRadioButton.insets = new Insets(0, 0, 5, 5);
         gbc_rdbtnNewRadioButton.gridx = 6;
