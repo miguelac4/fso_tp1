@@ -8,7 +8,7 @@ public class Application {
 	
 	public void run() {
 		
-		System.out.println("A aplicação começou.");
+		System.out.println("A aplicação começouu.");
 		while (!gui.getBD().isTerminar()) {
 			try {
 				Thread.sleep(100);
