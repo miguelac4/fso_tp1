@@ -28,6 +28,7 @@ public class GUI_tp1 extends JFrame {
         contentPane.setLayout(new BorderLayout());
 
         bd = new BaseDados();
+        
 
         // Fecho seguro da app
         addWindowListener(new WindowAdapter() {
@@ -147,7 +148,7 @@ public class GUI_tp1 extends JFrame {
         chckbxNewCheckBox = new JCheckBox("Ligar");
         chckbxNewCheckBox.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		if (chckbxNewCheckBox.isSelected()) {
+        		if (!bd.isRobotAberto()) {
         			String nome = bd.getNomeRobot();
         			boolean ok = bd.getRobot().OpenEV3(nome);
         			bd.setRobotAberto(ok);
@@ -180,9 +181,10 @@ public class GUI_tp1 extends JFrame {
         			return;
         		}
         		
-        		int distancia = bd.getDistancia();	
+        		int distancia = bd.getDistancia();
         		if (distancia >= 10 && distancia <= 50) {
         			bd.getRobot().Reta(distancia);
+        			bd.getRobot().Parar(false);
             		Consola("Fazer Reta | Distância = " + distancia);
         		} else {
         			Consola("Distância precisa de estar entre 10 e 50 cm");
@@ -211,6 +213,7 @@ public class GUI_tp1 extends JFrame {
         		int angulo = bd.getAngulo();
         		if (raio >= 10 && raio <= 30 && angulo >= 20 && angulo <= 90) {
         			bd.getRobot().CurvarEsquerda(raio, angulo);
+        			bd.getRobot().Parar(false);
         			Consola("Virar à esquerda | Raio = " + raio + "; Ângulo = " + angulo);
         		} else {
         			Consola("Raio necessita de estar entre 10 e 30 cm | "
@@ -266,6 +269,7 @@ public class GUI_tp1 extends JFrame {
         		int angulo = bd.getAngulo();
         		if (raio >= 10 && raio <= 30 && angulo >= 20 && angulo <= 90) {
         			bd.getRobot().CurvarDireita(raio, angulo);
+        			bd.getRobot().Parar(false);
         			Consola("Virar à direita | Raio = " + raio + "; Ângulo = " + angulo);
         		} else {
         			Consola("Raio necessita de estar entre 10 e 30 cm | "
@@ -295,6 +299,7 @@ public class GUI_tp1 extends JFrame {
                 int distancia = bd.getDistancia();
                 if (distancia >= 10 && distancia <= 50) {
                     bd.getRobot().Reta(-distancia);  // <<<<< nota o sinal negativo
+                    bd.getRobot().Parar(false);
                     Consola("Fazer Marcha-atrás | Distância = " + distancia);
                 } else {
                     Consola("Distância precisa de estar entre 10 e 50 cm");
