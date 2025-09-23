@@ -16,5 +16,5 @@ out/
 .DS_Store
 Thumbs.db
 
-# Maven / Gradle (se algum dia usares)
+# Maven / Gradle
 *.log
