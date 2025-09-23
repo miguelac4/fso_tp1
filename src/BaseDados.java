@@ -5,7 +5,7 @@ public class BaseDados {
     private int distancia;
     private int angulo;
     private int raio;
-    private String nomeRobot = "EV10";
+    private String nomeRobot = "EVA";
 
     public BaseDados() {
         robot = new RobotLegoEV3();
