@@ -230,6 +230,14 @@ public class GUI_tp1 extends JFrame {
         
         // BOTÃO --> PARAR
         btnParar = new JButton("PARAR");
+        btnParar.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		if (!bd.isRobotAberto()) {
+        			Consola("Necessita de ligar o robot primeiro!");
+        			return;
+        		}
+        	}
+        });
         btnParar.setBackground(Color.RED);
         btnParar.setOpaque(true);
         btnParar.setContentAreaFilled(true);
@@ -271,6 +279,14 @@ public class GUI_tp1 extends JFrame {
         
         //BOTÃO --> TRÁS
         btnTras = new JButton("TRÁS");
+        btnTras.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		if (!bd.isRobotAberto()) {
+        			Consola("Necessita de ligar o robot primeiro!");
+        			return;
+        		}
+        	}
+        });
         btnTras.setBackground(Color.PINK);
         btnTras.setOpaque(true);
         btnTras.setContentAreaFilled(true);
