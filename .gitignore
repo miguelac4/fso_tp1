@@ -18,3 +18,5 @@ Thumbs.db
 
 # Maven / Gradle
 *.log
+.classpath
+.classpath
