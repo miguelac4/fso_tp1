@@ -1,9 +1,9 @@
 public class Application {
-	private GUI_tp1 gui;
+	private GUI gui;
 	private boolean terminar = false;
 	
 	public Application() {
-		gui = new GUI_tp1();
+		gui = new GUI();
 	}
 	
 	public void run() {
