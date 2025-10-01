@@ -10,7 +10,8 @@ public class BaseDados {
     public BaseDados() {
         robot = new RobotLegoEV3();
         terminar = false;
-        robotAberto = false;
+        //robotAberto = false;
+        robotAberto = true; // Apenas para teste sem ROBOT
         //distancia = 0;
         //angulo = 0;
         //raio = 0;
