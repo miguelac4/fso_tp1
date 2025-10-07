@@ -7,13 +7,19 @@ public class Comando {
     public final int p1;  // Parametro para todos os movimentos ( Distancia ou Raio )
     public final int p2;  // Parametro para movimentos de rotacao ( Angulo )
 
-    private Comando(Tipo t, int p1, int p2) {
+    public Comando(Tipo t, int p1, int p2) {
         this.tipo = t;
         this.p1 = p1;
         this.p2 = p2;
     }
 
-    // Fábricas estáticas para maior clareza
+    public Comando(Comando comando) {
+    	this.tipo = comando.tipo;
+        this.p1 = comando.p1;
+        this.p2 = comando.p2;
+	}
+
+	// Fábricas estáticas para maior clareza
     public static Comando retaFrente(int dist) {
         return new Comando(Tipo.RETA_FRENTE, dist, 0);
     }

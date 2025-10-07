@@ -10,7 +10,7 @@ public class BufferCircular {
     //instrução para contar com a instrução parar(FALSE) obrigatorio no final das instrucoes
 
     // criar semaforos
-    Semaphore acessoElementos;
+    Semaphore acessoElemento;
     Semaphore elementosLivres;
     Semaphore elementosOcupados;
     
@@ -19,33 +19,33 @@ public class BufferCircular {
     	getBuffer = 0;
     	putBuffer = 0;
     	
-    	acessoElementos = new Semaphore(dimensaoBuffer);
-    	elementosLivres = new Semaphore(0);
-    	elementosOcupados = new Semaphore(1);
+    	elementosLivres = new Semaphore(dimensaoBuffer);
+    	elementosOcupados = new Semaphore(0);
+    	acessoElemento = new Semaphore(1);
     }
     
-    public void inserirElemento(String s){
+    public void inserirElemento(Comando comando){
     	try {
     		elementosLivres.acquire();
-    		acessoElementos.acquire();
-    		bufferCircular[putBuffer]= new String(s);
+    		acessoElemento.acquire();
+    		bufferCircular[putBuffer]= new Comando(comando);
     		putBuffer= ++putBuffer % dimensaoBuffer;
-    		acessoElementos.release();
+    		acessoElemento.release();
     	} catch (InterruptedException e) {}
     	 elementosOcupados.release();
     }
     
-    public String removerElemento() {
-    	 String s= null;
+    public Comando removerElemento() {
+    	 Comando comando= null;
     	 try {
     		 elementosOcupados.acquire();
-    		 acessoElementos.acquire();
+    		 acessoElemento.acquire();
     	 } catch (InterruptedException e) {}
-    	 s = new String(bufferCircular[getBuffer]);
+    	 comando = new Comando(bufferCircular[getBuffer]);
     	 getBuffer= ++getBuffer % dimensaoBuffer;
-    	 acessoElementos.release();
+    	 acessoElemento.release();
     	 elementosLivres.release();
-    	 return s;
+    	 return comando;
     }
 
 }
