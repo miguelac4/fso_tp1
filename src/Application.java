@@ -1,9 +1,11 @@
 public class Application {
 	private GUI gui;
+	private MovimentoAleatorio ma;
 	private boolean terminar = false;
 	
 	public Application() {
 		gui = new GUI();
+		ma = new MovimentoAleatorio();
 	}
 	
 	public void run() {
