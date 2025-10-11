@@ -13,9 +13,16 @@ public class GUI extends JFrame {
     private JSpinner spinner;
     private JRadioButton rdbtnNewRadioButton;
     private JTextArea console;
+    private MovimentoAleatorio produtor;
+    private Servidor consumidor;
+    private BufferCircular buffer;
     
     private void Consola(String s) {
     	console.append(s+"\n");
+    }
+    
+    public void setBuffer(BufferCircular buffer) {
+        this.buffer = buffer;
     }
 
     public GUI() {
@@ -155,12 +162,22 @@ public class GUI extends JFrame {
         			chckbxNewCheckBox.setSelected(ok);
         			Consola(ok ? "Robot conectado: " + nome 
         					: " Falha na ligação: " + nome);
+        			
+        			if (ok && produtor != null && consumidor != null) {
+                        produtor.desbloquear();
+                        consumidor.desbloquear();
+        			}
         		} else {
         			if (bd.isRobotAberto()) {
         				bd.getRobot().CloseEV3();
         				bd.setRobotAberto(false);
         			}
         			Consola("Robot desligado.");
+        			
+        			if (produtor != null && consumidor != null) {
+                        produtor.bloquear();
+                        consumidor.bloquear();
+                    }
         		}	
         	}
         });
@@ -183,8 +200,13 @@ public class GUI extends JFrame {
         		
         		int distancia = bd.getDistancia();
         		if (distancia >= 10 && distancia <= 50) {
-        			bd.getRobot().Reta(distancia);
-        			bd.getRobot().Parar(false);
+        			
+        			buffer.inserirElemento(Comando.retaFrente(distancia));
+        			buffer.inserirElemento(Comando.parar());
+        			
+        			//bd.getRobot().Reta(distancia);
+        			//bd.getRobot().Parar(false);
+        			
             		Consola("Fazer Reta | Distância = " + distancia);
         		} else {
         			Consola("Distância precisa de estar entre 10 e 50 cm");
@@ -212,8 +234,13 @@ public class GUI extends JFrame {
         		int raio = bd.getRaio();
         		int angulo = bd.getAngulo();
         		if (raio >= 10 && raio <= 30 && angulo >= 20 && angulo <= 90) {
-        			bd.getRobot().CurvarEsquerda(raio, angulo);
-        			bd.getRobot().Parar(false);
+        			
+        			buffer.inserirElemento(Comando.curvaEsq(raio, angulo));
+        			buffer.inserirElemento(Comando.parar());
+        			
+        			//bd.getRobot().CurvarEsquerda(raio, angulo);
+        			//bd.getRobot().Parar(false);
+        			
         			Consola("Virar à esquerda | Raio = " + raio + "; Ângulo = " + angulo);
         		} else {
         			Consola("Raio necessita de estar entre 10 e 30 cm | "
@@ -240,7 +267,11 @@ public class GUI extends JFrame {
         			return;
         		}
         		try {
-        			bd.getRobot().Parar(true); 
+        			
+        			buffer.inserirElemento(Comando.parar());
+        			
+        			//bd.getRobot().Parar(true); 
+        			
         			Consola("A parar o robot.");
         		} catch (Exception ex) {
         			Consola("Erro detetado ao tentar parar." + ex.getMessage());	
@@ -268,8 +299,13 @@ public class GUI extends JFrame {
         		int raio = bd.getRaio();
         		int angulo = bd.getAngulo();
         		if (raio >= 10 && raio <= 30 && angulo >= 20 && angulo <= 90) {
-        			bd.getRobot().CurvarDireita(raio, angulo);
-        			bd.getRobot().Parar(false);
+        			
+        			buffer.inserirElemento(Comando.curvaDir(raio, angulo));
+        			buffer.inserirElemento(Comando.parar());
+        			
+        			//bd.getRobot().CurvarDireita(raio, angulo);
+        			//bd.getRobot().Parar(false);
+        			
         			Consola("Virar à direita | Raio = " + raio + "; Ângulo = " + angulo);
         		} else {
         			Consola("Raio necessita de estar entre 10 e 30 cm | "
@@ -298,8 +334,14 @@ public class GUI extends JFrame {
 
                 int distancia = bd.getDistancia();
                 if (distancia >= 10 && distancia <= 50) {
-                    bd.getRobot().Reta(-distancia);  // <<<<< nota o sinal negativo
-                    bd.getRobot().Parar(false);
+                	
+                	buffer.inserirElemento(Comando.retaTras(distancia)); // <<<<< desta forma o sinal negativo fica na classe comando
+        			buffer.inserirElemento(Comando.parar());
+                	
+                    //bd.getRobot().Reta(-distancia);  // <<<<< nota o sinal negativo
+                    //bd.getRobot().Parar(false);
+                    
+                    
                     Consola("Fazer Marcha-atrás | Distância = " + distancia);
                 } else {
                     Consola("Distância precisa de estar entre 10 e 50 cm");
@@ -343,6 +385,15 @@ public class GUI extends JFrame {
         			Consola("Necessita de ligar o robot primeiro!");
         			return;
         		}
+        		if (produtor == null) {
+        	        Consola("Produtor não disponível.");
+        	        rdbtnNewRadioButton.setSelected(false);
+        	        return;
+        	    }
+        	    int n = (int) spinner.getValue();
+        	    produtor.iniciarComandos(n);                    // <<<<<<<<<<
+        	    Consola("Pedido de lote aleatório: " + n + " comandos (+ PARAR).");
+        	    rdbtnNewRadioButton.setSelected(false);     // opcional: desmarca
         	}
         });
         GridBagConstraints gbc_rdbtnNewRadioButton = new GridBagConstraints();
@@ -386,6 +437,11 @@ public class GUI extends JFrame {
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+    
+    public void setTarefas(MovimentoAleatorio produtor, Servidor consumidor) {
+        this.produtor = produtor;
+        this.consumidor = consumidor;
     }
 
     // <<< O GETTER TEM QUE FICAR AQUI, FORA DO CONSTRUTOR >>>
