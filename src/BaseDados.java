@@ -10,11 +10,12 @@ public class BaseDados {
     public BaseDados() {
         robot = new RobotLegoEV3();
         terminar = false;
-        robotAberto = false;
+        robotAberto = true;
         //distancia = 0;
         //angulo = 0;
         //raio = 0;
     }
+  
 
     public RobotLegoEV3 getRobot() { return robot; }
     public boolean isTerminar() { return terminar; }

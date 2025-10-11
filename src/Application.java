@@ -1,9 +1,23 @@
 public class Application {
 	private GUI gui;
-	private boolean terminar = false;
+	private MovimentoAleatorio produtor;
+	private Servidor consumidor;
+    private BufferCircular buffer;
+    private BaseDados bd;
 	
 	public Application() {
 		gui = new GUI();
+        bd = gui.getBD();
+
+        buffer = new BufferCircular();
+        produtor  = new MovimentoAleatorio(buffer, bd);
+        consumidor = new Servidor(buffer, bd.getRobot(), null);
+
+        produtor.start();
+        consumidor.start();
+        
+        gui.setTarefas(produtor, consumidor);
+        gui.setBuffer(buffer);
 	}
 	
 	public void run() {
