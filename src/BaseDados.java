@@ -8,9 +8,9 @@ public class BaseDados {
     private String nomeRobot = "EVA";
 
     public BaseDados() {
-        robot = new RobotLegoEV3();
         terminar = false;
         robotAberto = false;
+        robot = new RobotLegoEV3();
         //robot = new RobotLegoEV3SIM(mensagem -> System.out.println(mensagem));
         //distancia = 0;
         //angulo = 0;

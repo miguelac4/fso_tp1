@@ -14,6 +14,9 @@ public class BufferCircular {
     private final Semaphore elementosLivres;
     private final Semaphore elementosOcupados;
     
+    // Helper
+    public int ocupados() { return elementosOcupados.availablePermits(); }
+    
     public BufferCircular() {
     	bufferCircular = new Comando[dimensaoBuffer];
     	getBuffer = 0;
@@ -29,51 +32,52 @@ public class BufferCircular {
     	try {
     		
     		if (elementosLivres.availablePermits() == 0) {
-                System.out.println("[BUFFER] Buffer cheio — produtor vai aguardar espaço livre...");
+                System.out.println("[BUFFER] Buffer cheio (produtor vai aguardar espaço livre)");
             }
     		
     		elementosLivres.acquire();
     		acessoElemento.acquire();
     		
-    		bufferCircular[putBuffer]= new Comando(comando);
-    		putBuffer= ++putBuffer % dimensaoBuffer;
+    		bufferCircular[putBuffer]= comando;
+    		putBuffer = (putBuffer + 1) % dimensaoBuffer;
     		
-    		int ocupados = dimensaoBuffer - elementosLivres.availablePermits();
-            System.out.println("[BUFFER] Inserido comando (" + comando.tipo + "). Ocupados: " + ocupados + "/" + dimensaoBuffer);
-    		
-    		acessoElemento.release();
-    	} catch (InterruptedException e) {}
-    	 elementosOcupados.release();
+    	} catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            acessoElemento.release();
+            // primeiro liberta um "ocupado"
+            elementosOcupados.release();
+            System.out.println("[BUFFER] Inserido (" + comando.tipo + "). Ocupados: "
+                    + elementosOcupados.availablePermits() + "/" + dimensaoBuffer);
+        }
     }
     // ___________________CONSUMIDOR___________________
     public Comando removerElemento() {
     	 Comando comando= null;
     	 try {
     		 if (elementosOcupados.availablePermits() == 0) {
-                 System.out.println("[BUFFER] Nenhum comando disponível — consumidor vai aguardar...");
+                 System.out.println("[BUFFER] Vazio (consumidor vai aguardar)");
              }
     		 
     		 elementosOcupados.acquire();
     		 acessoElemento.acquire();
     		 
-    	 } catch (InterruptedException e) {}
-    	 comando = new Comando(bufferCircular[getBuffer]);
-    	 getBuffer= ++getBuffer % dimensaoBuffer;
-    	 
-    	 int ocupados = dimensaoBuffer - elementosLivres.availablePermits();
-         System.out.println("[BUFFER] Removido comando (" + comando.tipo + "). Ocupados: " + ocupados + "/" + dimensaoBuffer);
+    		 comando = bufferCircular[getBuffer];
+    	     getBuffer = (getBuffer + 1) % dimensaoBuffer;
+    		 
+    	 } catch (InterruptedException e) {
+    	        e.printStackTrace();
+    	    } finally {
+    	        acessoElemento.release();
+    	        elementosLivres.release();
+    	        System.out.println("[BUFFER] Removido (" + comando.tipo + "). Ocupados: "
+    	                + elementosOcupados.availablePermits() + "/" + dimensaoBuffer);
 
-    	 
-    	 
-    	 
-    	 acessoElemento.release();
-    	 elementosLivres.release();
-    	 
-    	 if (elementosOcupados.availablePermits() == 0) {
-             System.out.println("[BUFFER] Todas as tarefas foram consumidas — buffer está vazio.");
-    	 }
-    	 
-    	 return comando;
+    	        if (elementosOcupados.availablePermits() == 0) {
+    	            System.out.println("[BUFFER] (Vazio após consumir tudo)");
+    	        }
+    	    }
+    	    return comando;
     }
 
 }

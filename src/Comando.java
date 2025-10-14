@@ -25,7 +25,7 @@ public class Comando {
         return new Comando(Tipo.RETA_FRENTE, dist, 0);
     }
     public static Comando retaTras(int dist) {
-        return new Comando(Tipo.RETA_TRAS, -dist, 0);
+        return new Comando(Tipo.RETA_TRAS, dist, 0);
     }
     public static Comando curvaEsq(int raio, int ang) {
         return new Comando(Tipo.CURVA_ESQ, raio, ang);
