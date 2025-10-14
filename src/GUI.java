@@ -391,7 +391,7 @@ public class GUI extends JFrame {
         	        return;
         	    }
         	    int n = (int) spinner.getValue();
-        	    produtor.iniciarComandos(n);                    // <<<<<<<<<<
+        	    produtor.iniciarComandos(n);
         	    Consola("Pedido de lote aleatório: " + n + " comandos (+ PARAR).");
         	    rdbtnNewRadioButton.setSelected(false);     // opcional: desmarca
         	}
