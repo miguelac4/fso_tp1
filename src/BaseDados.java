@@ -10,7 +10,8 @@ public class BaseDados {
     public BaseDados() {
         robot = new RobotLegoEV3();
         terminar = false;
-        robotAberto = true;
+        robotAberto = false;
+        //robot = new RobotLegoEV3SIM(mensagem -> System.out.println(mensagem));
         //distancia = 0;
         //angulo = 0;
         //raio = 0;

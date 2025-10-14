@@ -15,14 +15,17 @@ public class Servidor extends Tarefa {
 
     // Métodos separados (bons para depuração e modularidade)
     public void Reta(int distancia) {
+    	System.out.print("TEST");
         robot.Reta(distancia);
     }
 
     public void CurvarDireita(int raio, int angulo) {
+    	System.out.print("TEST");
         robot.CurvarDireita(raio, angulo);
     }
 
     public void CurvarEsquerda(int raio, int angulo) {
+    	System.out.print("TEST");
         robot.CurvarEsquerda(raio, angulo);
     }
 
@@ -56,6 +59,6 @@ public class Servidor extends Tarefa {
 
     @Override
     protected void dormir() {
-        try { Thread.sleep(100); } catch (InterruptedException ignored) {}
+        try { Thread.sleep(20000); } catch (InterruptedException ignored) {}
     }
 }
