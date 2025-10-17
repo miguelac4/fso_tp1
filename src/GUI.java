@@ -367,7 +367,13 @@ public class GUI extends JFrame {
         gbc_lbl_Numero.gridy = 5;
         panelTop.add(lbl_Numero, gbc_lbl_Numero);
         
-        spinner = new JSpinner();
+        // cria o spinner já com modelo
+        spinner = new JSpinner(new SpinnerNumberModel(3, 0, 100, 1));
+        // mantém a BD sincronizada
+        spinner.addChangeListener(e -> bd.setSpinnerNum((Integer) spinner.getValue()));
+        // inicializa a BD com o valor atual
+        bd.setSpinnerNum((Integer) spinner.getValue());
+
         GridBagConstraints gbc_spinner = new GridBagConstraints();
         gbc_spinner.anchor = GridBagConstraints.WEST;
         gbc_spinner.insets = new Insets(0, 0, 5, 5);
@@ -385,12 +391,13 @@ public class GUI extends JFrame {
         			Consola("Necessita de ligar o robot primeiro!");
         			return;
         		}
+        		try { spinner.commitEdit(); } catch (java.text.ParseException ex) {}
         		if (produtor == null) {
         	        Consola("Produtor não disponível.");
         	        rdbtnNewRadioButton.setSelected(false);
         	        return;
         	    }
-        	    int n = (int) spinner.getValue();
+        	    int n = bd.getSpinnerNum();
         	    produtor.iniciarComandos(n);
         	    Consola("Pedido de lote aleatório: " + n + " comandos (+ PARAR).");
         	    rdbtnNewRadioButton.setSelected(false);     // opcional: desmarca
@@ -430,11 +437,6 @@ public class GUI extends JFrame {
         panelTop.add(scroll, gbc_console);
         setPreferredSize(new Dimension(600, 400));  // tamanho desejado da janela
         pack();                                      // calcula layout com base nos preferred sizes
-        setLocationRelativeTo(null);
-        setVisible(true);
-        
-
-        pack();
         setLocationRelativeTo(null);
         setVisible(true);
     }

@@ -20,19 +20,22 @@ public class MovimentoAleatorio extends Tarefa{
     }
 	
 	private Comando comandoAleatorio() {
-		int tipo = rnd.nextInt(3); // 0=RETA_FRENTE, 1=CURVA_ESQ, 2=CURVA_DIR
+		int tipo = rnd.nextInt(4); // 0=RETA_FRENTE, 1=CURVA_ESQ, 2=CURVA_DIR
 		
 		// Não é permitido os valores de distancia, raio e angulo serem menores que 10, 10, 30, respetivamente
-		
         switch (tipo) {
             case 0: { // RETA_FRENTE
-                int dist = 10 + rnd.nextInt(41); // 10..50 cm (ajusta à tua GUI)
+                int dist = 10 + rnd.nextInt(41); // 10..50 cm
                 return Comando.retaFrente(dist);
             }
             case 1: { // CURVA_ESQ
                 int raio = 10 + rnd.nextInt(21); // 10..30
                 int ang  = 30 + rnd.nextInt(61); // 30..90
                 return Comando.curvaEsq(raio, ang);
+            }
+            case 3:{
+            	int dist = 10 + rnd.nextInt(41); // 10..50 cm
+                return Comando.retaTras(dist);
             }
             default: { // CURVA_DIR
                 int raio = 10 + rnd.nextInt(21);
@@ -61,7 +64,7 @@ public class MovimentoAleatorio extends Tarefa{
 
     @Override
     protected void dormir() {
-        // podes reduzir a cadência quando "desativado"
+        // reduz a cadência quando "desativado"
         try { Thread.sleep(200); } catch (InterruptedException ignored) {}
     }
 

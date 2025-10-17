@@ -5,13 +5,15 @@ public class BaseDados {
     private int distancia;
     private int angulo;
     private int raio;
+    private int spinnerNum;
     private String nomeRobot = "EVA";
 
     public BaseDados() {
         terminar = false;
         robotAberto = false;
-        robot = new RobotLegoEV3();
-        //robot = new RobotLegoEV3SIM(mensagem -> System.out.println(mensagem));
+        //robot = new RobotLegoEV3();
+        robot = new RobotLegoEV3SIM(mensagem -> System.out.println(mensagem));
+        spinnerNum = 0;
         //distancia = 0;
         //angulo = 0;
         //raio = 0;
@@ -35,6 +37,14 @@ public class BaseDados {
    
     public void setNomeRobot(String nomeRobot) { this.nomeRobot = nomeRobot; }
     public String getNomeRobot() { return nomeRobot; }
+    
+    public void setSpinnerNum(int spinnerNum) {
+    	this.spinnerNum = spinnerNum;
+    }
+    
+    public int getSpinnerNum() {
+    	return spinnerNum;
+    }
     
 		
 	}
