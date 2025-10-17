@@ -50,13 +50,14 @@ public class MovimentoAleatorio extends Tarefa{
     protected void execucao() {
     	// só produz se o robot estiver ligado e houve pedido
         if (!bd.isRobotAberto() || pendentes <= 0) { bloquear(); return; }
-
+        System.out.println("___Lote Nova____");
         // produzir exatamente 'pendentes' comandos
         for (int i = 0; i < pendentes; i++) {
             buffer.inserirElemento(comandoAleatorio());
             try { Thread.sleep(50); } catch (InterruptedException ignored) {}
         }
         buffer.inserirElemento(Comando.parar());  // fecha o lote
+        System.out.println("________________");
 
         pendentes = 0;     // esgota o pedido
         bloquear();        // volta a BLOQUEADO até novo clique da GUI

@@ -21,7 +21,6 @@ public class Comando {
 
 	// Fábricas estáticas para maior clareza
     public static Comando retaFrente(int dist) {
-    	System.out.println("TEST");
         return new Comando(Tipo.RETA_FRENTE, dist, 0);
     }
     public static Comando retaTras(int dist) {
