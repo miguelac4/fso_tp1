@@ -54,7 +54,7 @@ public class MovimentoAleatorio extends Tarefa{
         // produzir exatamente 'pendentes' comandos
         for (int i = 0; i < pendentes; i++) {
             buffer.inserirElemento(comandoAleatorio());
-            try { Thread.sleep(50); } catch (InterruptedException ignored) {}
+            //try { Thread.sleep(50); } catch (InterruptedException ignored) {}
         }
         buffer.inserirElemento(Comando.parar());  // fecha o lote
         System.out.println("________________");
