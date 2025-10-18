@@ -420,6 +420,7 @@ public class GUI extends JFrame {
         	        timerAleatorio.start();
         	        Consola("Movimentos aleatórios: ATIVADOS (a cada 2s).");
         	    } else {
+        	    	buffer.clearBuffer();
         	        if (timerAleatorio != null) timerAleatorio.stop();
         	        Consola("Movimentos aleatórios: DESATIVADOS.");
         	    }
