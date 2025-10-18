@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 
 public class BufferCircular {
@@ -25,6 +26,29 @@ public class BufferCircular {
     	elementosLivres = new Semaphore(dimensaoBuffer);
     	elementosOcupados = new Semaphore(0);
     	acessoElemento = new Semaphore(1);
+    }
+    
+    // Função para limpar buffer e usar na GUI
+    public void clearBuffer() {
+        try {
+            acessoElemento.acquire();        // para alterações
+
+            // limpa o buffer
+            Arrays.fill(bufferCircular, null);
+            getBuffer = 0;
+            putBuffer = 0;
+
+            // reseta semaforos
+            elementosOcupados.drainPermits();
+            elementosLivres.drainPermits();
+            elementosLivres.release(dimensaoBuffer);
+
+            System.out.println("[BUFFER] Limpo (0/" + dimensaoBuffer + " ocupados).");
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            acessoElemento.release();
+        }
     }
     
     // ___________________PRODUTOR___________________

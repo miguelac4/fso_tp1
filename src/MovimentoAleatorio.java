@@ -20,23 +20,29 @@ public class MovimentoAleatorio extends Tarefa{
     }
 	
 	private Comando comandoAleatorio() {
-		int tipo = rnd.nextInt(3); // 0=RETA_FRENTE, 1=CURVA_ESQ, 2=CURVA_DIR
+		int tipo = rnd.nextInt(4); // 0=RETA_FRENTE, 1=CURVA_ESQ, 2=CURVA_DIR
 		
 		// Não é permitido os valores de distancia, raio e angulo serem menores que 10, 10, 30, respetivamente
-		
         switch (tipo) {
             case 0: { // RETA_FRENTE
-                int dist = 10 + rnd.nextInt(41); // 10..50 cm (ajusta à tua GUI)
+                int dist = 10 + rnd.nextInt(41); // 10..50 cm
+                // TODO: CALCULAR TEMPO DE EXECUCAO COM AS FUNCOES
                 return Comando.retaFrente(dist);
             }
             case 1: { // CURVA_ESQ
                 int raio = 10 + rnd.nextInt(21); // 10..30
                 int ang  = 30 + rnd.nextInt(61); // 30..90
+             // TODO: CALCULAR TEMPO DE EXECUCAO COM AS FUNCOES
                 return Comando.curvaEsq(raio, ang);
+            }
+            case 3:{
+            	int dist = 10 + rnd.nextInt(41); // 10..50 cm
+                return Comando.retaTras(dist);
             }
             default: { // CURVA_DIR
                 int raio = 10 + rnd.nextInt(21);
                 int ang  = 30 + rnd.nextInt(61);
+             // TODO: CALCULAR TEMPO DE EXECUCAO COM AS FUNCOES
                 return Comando.curvaDir(raio, ang);
             }
         }
@@ -47,13 +53,15 @@ public class MovimentoAleatorio extends Tarefa{
     protected void execucao() {
     	// só produz se o robot estiver ligado e houve pedido
         if (!bd.isRobotAberto() || pendentes <= 0) { bloquear(); return; }
-
+        System.out.println("___Lote Nova____");
+        
         // produzir exatamente 'pendentes' comandos
         for (int i = 0; i < pendentes; i++) {
             buffer.inserirElemento(comandoAleatorio());
-            try { Thread.sleep(50); } catch (InterruptedException ignored) {}
+            //try { Thread.sleep(50); } catch (InterruptedException ignored) {}
         }
         buffer.inserirElemento(Comando.parar());  // fecha o lote
+        System.out.println("________________");
 
         pendentes = 0;     // esgota o pedido
         bloquear();        // volta a BLOQUEADO até novo clique da GUI
@@ -61,7 +69,7 @@ public class MovimentoAleatorio extends Tarefa{
 
     @Override
     protected void dormir() {
-        // podes reduzir a cadência quando "desativado"
+        // reduz a cadência quando "desativado"
         try { Thread.sleep(200); } catch (InterruptedException ignored) {}
     }
 

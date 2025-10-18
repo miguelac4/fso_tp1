@@ -4,6 +4,7 @@ import java.awt.event.*;
 
 public class GUI extends JFrame {
 
+	private Timer timerAleatorio;
     private BaseDados bd;
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
@@ -367,7 +368,13 @@ public class GUI extends JFrame {
         gbc_lbl_Numero.gridy = 5;
         panelTop.add(lbl_Numero, gbc_lbl_Numero);
         
-        spinner = new JSpinner();
+        // cria o spinner já com modelo
+        spinner = new JSpinner(new SpinnerNumberModel(3, 0, 100, 1));
+        // mantém a BD sincronizada
+        spinner.addChangeListener(e -> bd.setSpinnerNum((Integer) spinner.getValue()));
+        // inicializa a BD com o valor atual
+        bd.setSpinnerNum((Integer) spinner.getValue());
+
         GridBagConstraints gbc_spinner = new GridBagConstraints();
         gbc_spinner.anchor = GridBagConstraints.WEST;
         gbc_spinner.insets = new Insets(0, 0, 5, 5);
@@ -380,20 +387,43 @@ public class GUI extends JFrame {
         rdbtnNewRadioButton = new JRadioButton("Movimentos Aleatórios");
         rdbtnNewRadioButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		if (!bd.isRobotAberto()) {
-        			rdbtnNewRadioButton.setSelected(false);
-        			Consola("Necessita de ligar o robot primeiro!");
-        			return;
-        		}
-        		if (produtor == null) {
-        	        Consola("Produtor não disponível.");
+        		// se não há robot, não liga
+        	    if (!bd.isRobotAberto()) {
         	        rdbtnNewRadioButton.setSelected(false);
+        	        Consola("Necessita de ligar o robot primeiro!");
         	        return;
         	    }
-        	    int n = (int) spinner.getValue();
-        	    produtor.iniciarComandos(n);
-        	    Consola("Pedido de lote aleatório: " + n + " comandos (+ PARAR).");
-        	    rdbtnNewRadioButton.setSelected(false);     // opcional: desmarca
+        	    if (produtor == null) {
+        	        rdbtnNewRadioButton.setSelected(false);
+        	        Consola("Produtor não disponível.");
+        	        return;
+        	    }
+
+        	    if (rdbtnNewRadioButton.isSelected()) {
+        	        // cria o timer só uma vez
+        	        if (timerAleatorio == null) {
+        	            timerAleatorio = new Timer(2000, ev -> {
+        	                // segurança: se desligar robot, pára tudo
+        	                if (!bd.isRobotAberto()) {
+        	                    timerAleatorio.stop();
+        	                    rdbtnNewRadioButton.setSelected(false);
+        	                    Consola("Robot desligado. A parar movimentos aleatórios.");
+        	                    return;
+        	                }
+        	                try { spinner.commitEdit(); } catch (java.text.ParseException ignored) {}
+        	                int n = (Integer) spinner.getValue();  // lê sempre o valor atual
+        	                produtor.iniciarComandos(n);
+        	                Consola("Pedido de lote aleatório: " + n + " comandos (+ PARAR).");
+        	            });
+        	            timerAleatorio.setRepeats(true);
+        	        }
+        	        timerAleatorio.start();
+        	        Consola("Movimentos aleatórios: ATIVADOS (a cada 2s).");
+        	    } else {
+        	    	buffer.clearBuffer();
+        	        if (timerAleatorio != null) timerAleatorio.stop();
+        	        Consola("Movimentos aleatórios: DESATIVADOS.");
+        	    }
         	}
         });
         GridBagConstraints gbc_rdbtnNewRadioButton = new GridBagConstraints();
@@ -430,11 +460,6 @@ public class GUI extends JFrame {
         panelTop.add(scroll, gbc_console);
         setPreferredSize(new Dimension(600, 400));  // tamanho desejado da janela
         pack();                                      // calcula layout com base nos preferred sizes
-        setLocationRelativeTo(null);
-        setVisible(true);
-        
-
-        pack();
         setLocationRelativeTo(null);
         setVisible(true);
     }
