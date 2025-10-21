@@ -11,8 +11,8 @@ public class BaseDados {
     public BaseDados() {
         terminar = false;
         robotAberto = false;
-        //robot = new RobotLegoEV3();
-        robot = new RobotLegoEV3SIM(mensagem -> System.out.println(mensagem));
+        robot = new RobotLegoEV3();
+        //robot = new RobotLegoEV3SIM(mensagem -> System.out.println(mensagem));
         spinnerNum = 0;
         //distancia = 0;
         //angulo = 0;
