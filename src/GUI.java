@@ -421,6 +421,7 @@ public class GUI extends JFrame {
         	        Consola("Movimentos aleatórios: ATIVADOS (a cada 2s).");
         	    } else {
         	    	buffer.clearBuffer();
+        	    	buffer.inserirElemento(Comando.parar());
         	        if (timerAleatorio != null) timerAleatorio.stop();
         	        Consola("Movimentos aleatórios: DESATIVADOS.");
         	    }

@@ -20,7 +20,7 @@ public class MovimentoAleatorio extends Tarefa{
     }
 	
 	private Comando comandoAleatorio() {
-		int tipo = rnd.nextInt(4); // 0=RETA_FRENTE, 1=CURVA_ESQ, 2=CURVA_DIR
+		int tipo = rnd.nextInt(4); // 0=RETA_FRENTE, 1=CURVA_ESQ, 2=CURVA_DIR, 4=RETA_TRAS
 		
 		// Não é permitido os valores de distancia, raio e angulo serem menores que 10, 10, 30, respetivamente
         switch (tipo) {
@@ -62,14 +62,13 @@ public class MovimentoAleatorio extends Tarefa{
         }
         buffer.inserirElemento(Comando.parar());  // fecha o lote
         System.out.println("________________");
-
+        dormir();
         pendentes = 0;     // esgota o pedido
         bloquear();        // volta a BLOQUEADO até novo clique da GUI
     }
 
     @Override
     protected void dormir() {
-        // reduz a cadência quando "desativado"
         try { Thread.sleep(200); } catch (InterruptedException ignored) {}
     }
 
