@@ -8,8 +8,8 @@ public class Servidor extends Tarefa {
      * Classe Consumidora
      * Executa os comandos no Robot
      */
-    public Servidor(BufferCircular buffer, BaseDados bd, RobotLegoEV3 robot, Tarefa proxima) {
-    	super(proxima);
+    public Servidor(BufferCircular buffer, BaseDados bd, RobotLegoEV3 robot) {
+    	super();
     	this.bd = bd;
         this.buffer = buffer;
         this.robot = robot;
@@ -55,7 +55,7 @@ public class Servidor extends Tarefa {
     }
     
     public int getTempoEspera(Comando c) {
-    	double vel = 0.02; // Passei 20 cm/s = 0.02 cm/ms para usar as formulas
+    	double vel = 20;
         int tempo_com = 100;
         int dist = 0;
         int raio = 0;
@@ -71,8 +71,10 @@ public class Servidor extends Tarefa {
 	        case CURVA_DIR:
 	        case CURVA_ESQ:
 	        	raio = c.p1;
-	        	angulo = (int) Math.toRadians(c.p2); // passar para radianos para usar a funcao
-	        	tempo_espera = (int) ((raio * angulo / vel) + tempo_com);
+	        	//System.out.println("c.p2 = " + c.p2);
+	        	angulo = c.p2;
+	        	//System.out.println("angulo = " + angulo);
+	        	tempo_espera = (int) ((raio * angulo * 1000 * (2*Math.PI/360) / vel) + tempo_com);
 	        	//System.out.println("Raio = " + raio + "\n Angulo = " + angulo);
 	            break;
 	        case PARAR:

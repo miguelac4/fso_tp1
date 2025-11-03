@@ -450,10 +450,10 @@ public class GUI extends JFrame {
         JScrollPane scroll = new JScrollPane(console);
 
         GridBagConstraints gbc_console = new GridBagConstraints();
-        gbc_console.gridx = 2;
+        gbc_console.gridx = 1;
         gbc_console.gridy = 7;
         gbc_console.gridwidth = 6;
-        gbc_console.gridheight = 3;
+        gbc_console.gridheight = 5;
         gbc_console.insets = new Insets(0, 0, 5, 0);
         gbc_console.fill = GridBagConstraints.BOTH;
         gbc_console.weightx = 1.0;   // << faz expandir na horizontal

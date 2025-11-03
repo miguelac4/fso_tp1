@@ -9,7 +9,7 @@ public class MovimentoAleatorio extends Tarefa{
     private volatile int pendentes = 0; // Tamanho do nr de comandos pedidos na GUI
 	
 	public MovimentoAleatorio(BufferCircular buffer, BaseDados bd) {
-        super(null);
+        super();
         this.buffer = buffer;
         this.bd = bd;
 	}
@@ -57,6 +57,7 @@ public class MovimentoAleatorio extends Tarefa{
         
         // produzir exatamente 'pendentes' comandos
         for (int i = 0; i < pendentes; i++) {
+        	System.out.println(i+1 + ":");
             buffer.inserirElemento(comandoAleatorio());
             //try { Thread.sleep(50); } catch (InterruptedException ignored) {}
         }

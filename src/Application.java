@@ -11,7 +11,7 @@ public class Application {
 
         buffer = new BufferCircular();
         produtor  = new MovimentoAleatorio(buffer, bd);
-        consumidor = new Servidor(buffer, bd, bd.getRobot(), null);
+        consumidor = new Servidor(buffer, bd, bd.getRobot());
 
         produtor.start();
         consumidor.start();
