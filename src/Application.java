@@ -4,6 +4,8 @@ public class Application {
 	private Servidor consumidor;
     private BufferCircular buffer;
     private BaseDados bd;
+    
+    private MonitorRobot monitor;
 	
 	public Application() {
 		gui = new GUI();
@@ -11,7 +13,9 @@ public class Application {
 
         buffer = new BufferCircular();
         produtor  = new MovimentoAleatorio(buffer, bd);
-        consumidor = new Servidor(buffer, bd, bd.getRobot());
+        monitor = new MonitorRobot();
+        
+        consumidor = new Servidor(buffer, bd, bd.getRobot(), monitor);
 
         produtor.start();
         consumidor.start();

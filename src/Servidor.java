@@ -3,16 +3,18 @@ public class Servidor extends Tarefa {
 	private BufferCircular buffer;
     private RobotLegoEV3 robot;
     private final BaseDados bd;
+    private final MonitorRobot monitor;
 
     /*
      * Classe Consumidora
      * Executa os comandos no Robot
      */
-    public Servidor(BufferCircular buffer, BaseDados bd, RobotLegoEV3 robot) {
+    public Servidor(BufferCircular buffer, BaseDados bd, RobotLegoEV3 robot, MonitorRobot monitor) {
     	super();
     	this.bd = bd;
         this.buffer = buffer;
         this.robot = robot;
+        this.monitor = monitor;
     }
 
     // Métodos separados (bons para depuração e modularidade)
@@ -83,9 +85,24 @@ public class Servidor extends Tarefa {
 	    }
 	   return tempo_espera;
     }
+    
+    // Exclusão Mutua entre Servidor - EvitarObstaculo
+    private void executarComExclusao(Comando c) {
+        try {
+            monitor.pedirAcesso();       // bloqueia se Evitar pediu preempção
+            executar(c);                 // envia comando ao robô
+            Thread.sleep(getTempoEspera(c));  // aguarda duração do comando
+        } catch (InterruptedException ignored) {
+            Thread.currentThread().interrupt();
+        } finally {
+            monitor.libertarAcesso();    // permite Evitar assumir (se preempção ativa)
+        }
+    }
+
 
     @Override
     protected void execucao() {
+    	/*
     	if (!bd.isRobotAberto()) { bloquear(); return; }
 
         // 1) aguarda 1 comando (bloqueante)
@@ -104,6 +121,23 @@ public class Servidor extends Tarefa {
             System.out.println("[EXEC] " + c.tipo + " | P1: " + c.p1 + " | P2: " + c.p2);
             System.out.println("[c/] Tempo de Execução: " + getTempoEspera(c));
             try { Thread.sleep(getTempoEspera(c)); } catch (InterruptedException ignored) {}
+        }
+        */
+    	
+    	if (!bd.isRobotAberto()) { bloquear(); return; }
+
+        // 1) um comando (bloqueante)
+        Comando c = buffer.removerElemento();
+        System.out.println("[EXEC] " + c.tipo + " | P1: " + c.p1 + " | P2: " + c.p2);
+        System.out.println("[c/] Tempo de Execução: " + getTempoEspera(c));
+        executarComExclusao(c);
+
+        // 2) drena restantes disponíveis (cada um protegido pelo monitor)
+        while (buffer.ocupados() > 0) {
+            c = buffer.removerElemento();
+            System.out.println("[EXEC] " + c.tipo + " | P1: " + c.p1 + " | P2: " + c.p2);
+            System.out.println("[c/] Tempo de Execução: " + getTempoEspera(c));
+            executarComExclusao(c);
         }
     }
 
