@@ -1,11 +1,10 @@
 
-// MonitorAcessoRobot.java
 public class MonitorRobot {
     private boolean ocupado = false;
-    private boolean preempt = false;
+    private boolean prioridade = false;
 
     public synchronized void pedirAcesso() throws InterruptedException {
-        while (ocupado || preempt) wait();
+        while (ocupado || prioridade) wait();
         ocupado = true;
     }
 
@@ -14,18 +13,18 @@ public class MonitorRobot {
         notifyAll();
     }
 
-    // Sinalização de emergência: EvitarObstaculo quer assumir o controlo
-    public synchronized void pedirPreempcao() {
-        preempt = true;
-        // não bloqueia aqui; serve para travar novas entradas de Servidor/GUI
-        // EvitarObstaculo deve parar o robô já de seguida e depois tomar posse.
+    // Usado pelo EvitarObstaculo para se meter a frente dos comandos
+    public synchronized void pedirPrioridade() {
+        prioridade = true;
+       
+        // EvitarObstaculo.
     }
 
     // Após parar o robô, EvitarObstaculo aguarda posse exclusiva
-    public synchronized void assumirPossePreemptiva() throws InterruptedException {
+    public synchronized void assumirPossePrioritaria() throws InterruptedException {
         while (ocupado) wait();
         ocupado = true;
-        preempt = false; // posse adquirida, limpar sinal de preempção
+        prioridade = false; // posse adquirida, limpar sinal de prioridade
     }
 }
 

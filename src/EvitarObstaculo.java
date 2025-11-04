@@ -31,25 +31,23 @@ public class EvitarObstaculo extends Tarefa{
 	protected void execucao() {
 		if (!bd.isRobotAberto()) { bloquear(); return; }
 		//System.out.print("TESTE");
-		// vigia o sensor periodicamente
-        //try { Thread.sleep(50); } catch (InterruptedException ignored) {}
 
         if (robot.SensorToque(robot.S_1) == 1) {
             // 1) sinaliza preempção e pára já o robô
-            monitor.pedirPreempcao();
-            robot.Parar(false);
+            monitor.pedirPrioridade();
+            //robot.Parar(false);	
 
             try {
                 // 2) assume posse exclusiva antes de desviar
-                monitor.assumirPossePreemptiva();
-
+                monitor.assumirPossePrioritaria();
+                
                 // 3) faz o desvio (mantendo a posse do monitor!)
                 ExecutarEvitar();
 
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } finally {
-                // 4) liberta a posse para o Servidor voltar a consumir
+                // liberta a posse para o servidor voltar a consumir
                 monitor.libertarAcesso();
             }
         }

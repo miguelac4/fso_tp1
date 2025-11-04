@@ -96,13 +96,13 @@ public class Servidor extends Tarefa {
     // Exclusão Mutua entre Servidor - EvitarObstaculo
     private void executarComExclusao(Comando c) {
         try {
-            monitor.pedirAcesso();       // bloqueia se Evitar pediu preempção
+            monitor.pedirAcesso();       // bloqueia se EvitarObstaculo foi ativado
             executar(c);                 // envia comando ao robô
             Thread.sleep(getTempoEspera(c));  // aguarda duração do comando
         } catch (InterruptedException ignored) {
             Thread.currentThread().interrupt();
         } finally {
-            monitor.libertarAcesso();    // permite Evitar assumir (se preempção ativa)
+            monitor.libertarAcesso();    // permite Evitar assumir (se EvitarObstaculo foi ativo no monitor)
         }
     }
 
