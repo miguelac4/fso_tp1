@@ -33,6 +33,10 @@ public class Servidor extends Tarefa {
     public void Parar() {
         robot.Parar(false);
     }
+    
+    public void PararForce() {
+    	robot.Parar(true);
+    }
 
     // Método principal do consumidor (executa o comando retirado do buffer)
     public void executar(Comando comando) {
@@ -53,6 +57,9 @@ public class Servidor extends Tarefa {
             case PARAR:
                 Parar();
                 break;
+            case PARARFORCE:
+            	PararForce();
+            	break;
         }
     }
     
@@ -125,6 +132,7 @@ public class Servidor extends Tarefa {
         */
     	
     	if (!bd.isRobotAberto()) { bloquear(); return; }
+
 
         // 1) um comando (bloqueante)
         Comando c = buffer.removerElemento();

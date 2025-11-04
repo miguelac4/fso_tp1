@@ -13,7 +13,7 @@ public class EvitarObstaculo extends Tarefa{
 	}
 	
 	public void ExecutarEvitar() {
-		robot.Parar(false);
+		robot.Parar(true);
 		robot.Reta(-20);
 		// Fazer sleep para executar o Reta, tempo calculado com as funções do tp1
 		try { Thread.sleep(1100); } catch (InterruptedException ignored) {} 
@@ -29,10 +29,12 @@ public class EvitarObstaculo extends Tarefa{
 
 	@Override
 	protected void execucao() {
+		if (!bd.isRobotAberto()) { bloquear(); return; }
+		//System.out.print("TESTE");
 		// vigia o sensor periodicamente
-        try { Thread.sleep(50); } catch (InterruptedException ignored) {}
+        //try { Thread.sleep(50); } catch (InterruptedException ignored) {}
 
-        if (robot.SensorToque() == 1) {
+        if (robot.SensorToque(robot.S_1) == 1) {
             // 1) sinaliza preempção e pára já o robô
             monitor.pedirPreempcao();
             robot.Parar(false);

@@ -4,8 +4,9 @@ public class Application {
 	private Servidor consumidor;
     private BufferCircular buffer;
     private BaseDados bd;
-    
+    private EvitarObstaculo evitarObst;
     private MonitorRobot monitor;
+   
 	
 	public Application() {
 		gui = new GUI();
@@ -16,9 +17,12 @@ public class Application {
         monitor = new MonitorRobot();
         
         consumidor = new Servidor(buffer, bd, bd.getRobot(), monitor);
+        evitarObst = new EvitarObstaculo(bd, bd.getRobot(), monitor);
+        
 
         produtor.start();
         consumidor.start();
+        evitarObst.start();
         
         gui.setTarefas(produtor, consumidor);
         gui.setBuffer(buffer);
@@ -28,6 +32,7 @@ public class Application {
 		
 		System.out.println("A aplicação começou.");
 		while (!gui.getBD().isTerminar()) {
+			evitarObst.desbloquear();
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {

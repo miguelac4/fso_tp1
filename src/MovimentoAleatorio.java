@@ -20,7 +20,7 @@ public class MovimentoAleatorio extends Tarefa{
     }
 	
 	private Comando comandoAleatorio() {
-		int tipo = rnd.nextInt(4); // 0=RETA_FRENTE, 1=CURVA_ESQ, 2=CURVA_DIR, 4=RETA_TRAS
+		int tipo = rnd.nextInt(3); // 0=RETA_FRENTE, 1=CURVA_ESQ, 2=CURVA_DIR
 		
 		// Não é permitido os valores de distancia, raio e angulo serem menores que 10, 10, 30, respetivamente
         switch (tipo) {
@@ -34,10 +34,6 @@ public class MovimentoAleatorio extends Tarefa{
                 int ang  = 30 + rnd.nextInt(61); // 30..90
              // TODO: CALCULAR TEMPO DE EXECUCAO COM AS FUNCOES
                 return Comando.curvaEsq(raio, ang);
-            }
-            case 3:{
-            	int dist = 10 + rnd.nextInt(41); // 10..50 cm
-                return Comando.retaTras(dist);
             }
             default: { // CURVA_DIR
                 int raio = 10 + rnd.nextInt(21);
