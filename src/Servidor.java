@@ -3,16 +3,18 @@ public class Servidor extends Tarefa {
 	private BufferCircular buffer;
     private RobotLegoEV3 robot;
     private final BaseDados bd;
+    private final MonitorRobot monitor;
 
     /*
      * Classe Consumidora
      * Executa os comandos no Robot
      */
-    public Servidor(BufferCircular buffer, BaseDados bd, RobotLegoEV3 robot, Tarefa proxima) {
-    	super(proxima);
+    public Servidor(BufferCircular buffer, BaseDados bd, RobotLegoEV3 robot, MonitorRobot monitor) {
+    	super();
     	this.bd = bd;
         this.buffer = buffer;
         this.robot = robot;
+        this.monitor = monitor;
     }
 
     // Métodos separados (bons para depuração e modularidade)
@@ -30,6 +32,10 @@ public class Servidor extends Tarefa {
 
     public void Parar() {
         robot.Parar(false);
+    }
+    
+    public void PararForce() {
+    	robot.Parar(true);
     }
 
     // Método principal do consumidor (executa o comando retirado do buffer)
@@ -51,11 +57,14 @@ public class Servidor extends Tarefa {
             case PARAR:
                 Parar();
                 break;
+            case PARARFORCE:
+            	PararForce();
+            	break;
         }
     }
     
     public int getTempoEspera(Comando c) {
-    	double vel = 0.02; // Passei 20 cm/s = 0.02 cm/ms para usar as formulas
+    	double vel = 20;
         int tempo_com = 100;
         int dist = 0;
         int raio = 0;
@@ -71,8 +80,10 @@ public class Servidor extends Tarefa {
 	        case CURVA_DIR:
 	        case CURVA_ESQ:
 	        	raio = c.p1;
-	        	angulo = (int) Math.toRadians(c.p2); // passar para radianos para usar a funcao
-	        	tempo_espera = (int) ((raio * angulo / vel) + tempo_com);
+	        	//System.out.println("c.p2 = " + c.p2);
+	        	angulo = c.p2;
+	        	//System.out.println("angulo = " + angulo);
+	        	tempo_espera = (int) ((raio * angulo * 1000 * (2*Math.PI/360) / vel) + tempo_com);
 	        	//System.out.println("Raio = " + raio + "\n Angulo = " + angulo);
 	            break;
 	        case PARAR:
@@ -81,9 +92,24 @@ public class Servidor extends Tarefa {
 	    }
 	   return tempo_espera;
     }
+    
+    // Exclusão Mutua entre Servidor - EvitarObstaculo
+    private void executarComExclusao(Comando c) {
+        try {
+            monitor.pedirAcesso();       // bloqueia se Evitar pediu preempção
+            executar(c);                 // envia comando ao robô
+            Thread.sleep(getTempoEspera(c));  // aguarda duração do comando
+        } catch (InterruptedException ignored) {
+            Thread.currentThread().interrupt();
+        } finally {
+            monitor.libertarAcesso();    // permite Evitar assumir (se preempção ativa)
+        }
+    }
+
 
     @Override
     protected void execucao() {
+    	/*
     	if (!bd.isRobotAberto()) { bloquear(); return; }
 
         // 1) aguarda 1 comando (bloqueante)
@@ -102,6 +128,24 @@ public class Servidor extends Tarefa {
             System.out.println("[EXEC] " + c.tipo + " | P1: " + c.p1 + " | P2: " + c.p2);
             System.out.println("[c/] Tempo de Execução: " + getTempoEspera(c));
             try { Thread.sleep(getTempoEspera(c)); } catch (InterruptedException ignored) {}
+        }
+        */
+    	
+    	if (!bd.isRobotAberto()) { bloquear(); return; }
+
+
+        // 1) um comando (bloqueante)
+        Comando c = buffer.removerElemento();
+        System.out.println("[EXEC] " + c.tipo + " | P1: " + c.p1 + " | P2: " + c.p2);
+        System.out.println("[c/] Tempo de Execução: " + getTempoEspera(c));
+        executarComExclusao(c);
+
+        // 2) drena restantes disponíveis (cada um protegido pelo monitor)
+        while (buffer.ocupados() > 0) {
+            c = buffer.removerElemento();
+            System.out.println("[EXEC] " + c.tipo + " | P1: " + c.p1 + " | P2: " + c.p2);
+            System.out.println("[c/] Tempo de Execução: " + getTempoEspera(c));
+            executarComExclusao(c);
         }
     }
 

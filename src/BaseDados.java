@@ -7,6 +7,7 @@ public class BaseDados {
     private int raio;
     private int spinnerNum;
     private String nomeRobot = "EVA";
+    private int robotColide;
 
     public BaseDados() {
         terminar = false;
@@ -17,6 +18,7 @@ public class BaseDados {
         //distancia = 0;
         //angulo = 0;
         //raio = 0;
+        robotColide = 0;
     }
   
 
@@ -44,6 +46,14 @@ public class BaseDados {
     
     public int getSpinnerNum() {
     	return spinnerNum;
+    }
+    
+    public void setRobotColide(int value) {
+    	this.robotColide = 1;
+    }
+    
+    public int getRobotColide() {
+    	return robotColide;
     }
     
 		

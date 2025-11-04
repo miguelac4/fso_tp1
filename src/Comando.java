@@ -1,6 +1,6 @@
 public class Comando {
 
-    public enum Tipo { RETA_FRENTE, RETA_TRAS, CURVA_ESQ, CURVA_DIR, PARAR }
+    public enum Tipo { RETA_FRENTE, RETA_TRAS, CURVA_ESQ, CURVA_DIR, PARAR, PARARFORCE }
 
     // Apenas dois parametros pois o movimento mais complexo tem no máximo 2 parametros
     public final Tipo tipo;
@@ -34,5 +34,8 @@ public class Comando {
     }
     public static Comando parar() {
         return new Comando(Tipo.PARAR, 0, 0);
+    }
+    public static Comando pararForce() {
+        return new Comando(Tipo.PARARFORCE, 0, 0);
     }
 }

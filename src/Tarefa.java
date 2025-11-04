@@ -5,12 +5,10 @@ public abstract class Tarefa extends Thread{
 	
 	private Semaphore sem;
 	private byte estado;
-	protected Tarefa proxima;
 	
-	public Tarefa(Tarefa t) {
+	public Tarefa() {
 		estado = BLOQUEADO;
 		sem = new Semaphore(0);
-		proxima = t;
 	}
 	
 	public void desbloquear() {
@@ -18,15 +16,13 @@ public abstract class Tarefa extends Thread{
 		sem.release();
 	}
 	
-	public void setProxima(Tarefa t) {
-		proxima = t;
-	}
 	
 	public void bloquear() {
+		//sem.drainPermits();
 		estado = BLOQUEADO;
-		//try {
-			sem.drainPermits();
-		//} catch (InterruptedException e) {e.printStackTrace();}
+		try {
+			sem.acquire();
+		} catch (InterruptedException e) {e.printStackTrace();}
 	}
 	
 	private void esperaTrabalho() {
