@@ -1,39 +1,49 @@
+import java.util.function.Consumer;
+
 public class Servidor extends Tarefa {
     
 	private BufferCircular buffer;
     private RobotLegoEV3 robot;
     private final BaseDados bd;
+    
+    private final Consumer<String> log;
 
     /*
      * Classe Consumidora
      * Executa os comandos no Robot
      */
-    public Servidor(BufferCircular buffer, BaseDados bd, RobotLegoEV3 robot) {
+    public Servidor(BufferCircular buffer, BaseDados bd, RobotLegoEV3 robot, Consumer<String> logger) {
     	super();
     	this.bd = bd;
         this.buffer = buffer;
         this.robot = robot;
+        this.log = (logger != null) ? logger : System.out::println;
     }
 
     // Métodos separados (bons para depuração e modularidade)
     public void Reta(int distancia) {
         robot.Reta(distancia);
+        log.accept("Reta(" + distancia + " cm)");
     }
 
     public void CurvarDireita(int raio, int angulo) {
         robot.CurvarDireita(raio, angulo);
+        log.accept("CurvarDireita(raio=" + raio + ", ang=" + angulo + ")");
     }
 
     public void CurvarEsquerda(int raio, int angulo) {
         robot.CurvarEsquerda(raio, angulo);
+        log.accept("CurvarEsquerda(raio=" + raio + ", ang=" + angulo + ")");
     }
 
     public void Parar() {
         robot.Parar(false);
+        log.accept("Parar(imediato= false)");
     }
     
     public void PararForce() {
     	robot.Parar(true);
+    	log.accept("Parar(imediato= true)");
     }
 
     // Método principal do consumidor (executa o comando retirado do buffer)

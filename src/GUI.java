@@ -246,7 +246,7 @@ public class GUI extends JFrame {
         		}
         		int raio = bd.getRaio();
         		int angulo = bd.getAngulo();
-        		if (raio >= 10 && raio <= 30 && angulo >= 20 && angulo <= 90) {
+        		if (raio >= 0 && raio <= 30 && angulo >= 20 && angulo <= 90) {
         			
         			buffer.inserirElemento(Comando.curvaEsq(raio, angulo));
         			buffer.inserirElemento(Comando.parar());
@@ -311,7 +311,7 @@ public class GUI extends JFrame {
         		}
         		int raio = bd.getRaio();
         		int angulo = bd.getAngulo();
-        		if (raio >= 10 && raio <= 30 && angulo >= 20 && angulo <= 90) {
+        		if (raio >= 0 && raio <= 30 && angulo >= 20 && angulo <= 90) {
         			
         			buffer.inserirElemento(Comando.curvaDir(raio, angulo));
         			buffer.inserirElemento(Comando.parar());
