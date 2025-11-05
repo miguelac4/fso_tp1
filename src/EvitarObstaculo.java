@@ -3,13 +3,11 @@ public class EvitarObstaculo extends Tarefa{
 	
 	private RobotLegoEV3 robot;
 	private final BaseDados bd;
-	private final MonitorRobot monitor;
 	
-	public EvitarObstaculo(BaseDados bd, RobotLegoEV3 robot, MonitorRobot monitor) {
+	public EvitarObstaculo(BaseDados bd, RobotLegoEV3 robot) {
 		super();
 		this.bd = bd;
 		this.robot = robot;
-		this.monitor = monitor;
 	}
 	
 	public void ExecutarEvitar() {
@@ -30,27 +28,30 @@ public class EvitarObstaculo extends Tarefa{
 	@Override
 	protected void execucao() {
 		if (!bd.isRobotAberto()) { bloquear(); return; }
-		//System.out.print("TESTE");
 
-        if (robot.SensorToque(robot.S_1) == 1) {
-            // 1) sinaliza preempção e pára já o robô
-            monitor.pedirPrioridade();
-            //robot.Parar(false);	
+	    if (robot.SensorToque(robot.S_1) == 1) {
+	        // 1) ativar prioridade (não precisa de synchronized; a flag é volatile)
+	        bd.prioridadeEvitar = true;
 
-            try {
-                // 2) assume posse exclusiva antes de desviar
-                monitor.assumirPossePrioritaria();
-                
-                // 3) faz o desvio (mantendo a posse do monitor!)
-                ExecutarEvitar();
+	        // 2) assumir posse quando o Servidor largar o lock (após o comando atual)
+	        synchronized (robot) {
+	            // 2.1) limpar prioridade ao entrar: evita bloquear o Servidor no próximo comando
+	            bd.prioridadeEvitar = false;
 
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            } finally {
-                // liberta a posse para o servidor voltar a consumir
-                monitor.libertarAcesso();
-            }
-        }
-		
+	            // 3) DESVIO completo, sempre dentro do lock
+	            robot.Parar(true);
+	            robot.Reta(-20);
+	            try { Thread.sleep(1100); } catch (InterruptedException ignored) { Thread.currentThread().interrupt(); }
+
+	            if (Math.random() < 0.5) robot.CurvarEsquerda(1, 90);
+	            else                     robot.CurvarDireita(1, 90);
+	            try { Thread.sleep(183); } catch (InterruptedException ignored) { Thread.currentThread().interrupt(); }
+
+	            robot.Parar(false);
+
+	            // 4) acordar o Servidor (que pode estar em wait() por causa da flag)
+	            robot.notifyAll();
+	        }
+	    }
 	}
 }

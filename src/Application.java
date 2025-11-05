@@ -1,23 +1,28 @@
 public class Application {
 	private GUI gui;
+	private ConsoleSIMGUI guiSim;
 	private MovimentoAleatorio produtor;
 	private Servidor consumidor;
     private BufferCircular buffer;
     private BaseDados bd;
     private EvitarObstaculo evitarObst;
-    private MonitorRobot monitor;
    
 	
 	public Application() {
 		gui = new GUI();
+		guiSim = new ConsoleSIMGUI();
         bd = gui.getBD();
+        
+        // DESCOMENTAR PARA USAR SIMULAÇÃO
+        RobotLegoEV3SIM simRobot = new RobotLegoEV3SIM(guiSim.getLogger());
+        guiSim.setSimularEvitarCallback(() -> evitarObst.ExecutarEvitar());
+        bd.setRobot(simRobot);
 
         buffer = new BufferCircular();
         produtor  = new MovimentoAleatorio(buffer, bd);
-        monitor = new MonitorRobot();
         
-        consumidor = new Servidor(buffer, bd, bd.getRobot(), monitor);
-        evitarObst = new EvitarObstaculo(bd, bd.getRobot(), monitor);
+        consumidor = new Servidor(buffer, bd, bd.getRobot());
+        evitarObst = new EvitarObstaculo(bd, bd.getRobot());
         
 
         produtor.start();
