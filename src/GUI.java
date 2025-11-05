@@ -41,8 +41,15 @@ public class GUI extends JFrame {
         // Fecho seguro da app
         addWindowListener(new WindowAdapter() {
             @Override public void windowClosing(WindowEvent e) {
-                if (bd.isRobotAberto()) {
-                    bd.getRobot().CloseEV3();
+            	if (bd.isRobotAberto()) {
+                    RobotLegoEV3 robot = bd.getRobot();
+                    synchronized (robot) {
+                        try {
+                            robot.Parar(true);
+                        } catch (Exception ignore) {}
+                        robot.CloseEV3();
+                        robot.notifyAll();
+                    }
                     bd.setRobotAberto(false);
                 }
                 bd.setTerminar(true);
@@ -169,11 +176,16 @@ public class GUI extends JFrame {
                         consumidor.desbloquear();
         			}
         		} else {
-        			if (bd.isRobotAberto()) {
-        				bd.getRobot().CloseEV3();
-        				bd.setRobotAberto(false);
-        			}
-        			Consola("Robot desligado.");
+        		    if (bd.isRobotAberto()) {
+        		        RobotLegoEV3 robot = bd.getRobot();
+        		        synchronized (robot) {
+        		            try { robot.Parar(true); } catch (Exception ignore) {}
+        		            robot.CloseEV3();
+        		            robot.notifyAll();
+        		        }
+        		        bd.setRobotAberto(false);
+        		    }
+        		    Consola("Robot desligado.");
         			
         			if (produtor != null && consumidor != null) {
                         produtor.bloquear();

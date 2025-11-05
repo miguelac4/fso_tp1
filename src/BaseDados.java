@@ -7,22 +7,29 @@ public class BaseDados {
     private int raio;
     private int spinnerNum;
     private String nomeRobot = "EVA";
-    private int robotColide;
+    public volatile boolean prioridadeEvitar = false; // flag de prioridade
 
     public BaseDados() {
         terminar = false;
         robotAberto = false;
-        robot = new RobotLegoEV3();
-        //robot = new RobotLegoEV3SIM(mensagem -> System.out.println(mensagem));
+        
+        // DESCOMENTAR PARA USAR SIMULAÇÃO
+        //robot = new RobotLegoEV3();
+        robot = new RobotLegoEV3SIM(mensagem -> System.out.println(mensagem));
+        
         spinnerNum = 0;
         //distancia = 0;
         //angulo = 0;
         //raio = 0;
-        robotColide = 0;
     }
   
 
     public RobotLegoEV3 getRobot() { return robot; }
+    
+    public void setRobot(RobotLegoEV3 robot) {
+        this.robot = robot;
+    }
+    
     public boolean isTerminar() { return terminar; }
     public void setTerminar(boolean terminar) { this.terminar = terminar; }
     public boolean isRobotAberto() { return robotAberto; }
@@ -46,15 +53,5 @@ public class BaseDados {
     
     public int getSpinnerNum() {
     	return spinnerNum;
-    }
-    
-    public void setRobotColide(int value) {
-    	this.robotColide = 1;
-    }
-    
-    public int getRobotColide() {
-    	return robotColide;
-    }
-    
-		
-	}
+    }	
+}

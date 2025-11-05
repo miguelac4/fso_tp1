@@ -3,18 +3,16 @@ public class Servidor extends Tarefa {
 	private BufferCircular buffer;
     private RobotLegoEV3 robot;
     private final BaseDados bd;
-    private final MonitorRobot monitor;
 
     /*
      * Classe Consumidora
      * Executa os comandos no Robot
      */
-    public Servidor(BufferCircular buffer, BaseDados bd, RobotLegoEV3 robot, MonitorRobot monitor) {
+    public Servidor(BufferCircular buffer, BaseDados bd, RobotLegoEV3 robot) {
     	super();
     	this.bd = bd;
         this.buffer = buffer;
         this.robot = robot;
-        this.monitor = monitor;
     }
 
     // Métodos separados (bons para depuração e modularidade)
@@ -95,14 +93,22 @@ public class Servidor extends Tarefa {
     
     // Exclusão Mutua entre Servidor - EvitarObstaculo
     private void executarComExclusao(Comando c) {
-        try {
-            monitor.pedirAcesso();       // bloqueia se Evitar pediu preempção
-            executar(c);                 // envia comando ao robô
-            Thread.sleep(getTempoEspera(c));  // aguarda duração do comando
-        } catch (InterruptedException ignored) {
-            Thread.currentThread().interrupt();
-        } finally {
-            monitor.libertarAcesso();    // permite Evitar assumir (se preempção ativa)
+    	RobotLegoEV3 robot = bd.getRobot();
+        synchronized (robot) {
+            // Se Evitar pediu prioridade, Servidor espera
+            while (bd.prioridadeEvitar) {
+                try { robot.wait(); } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+            }
+
+            // Enviar o comando e aguardar a sua duração COM o lock
+            executar(c);
+            try { Thread.sleep(getTempoEspera(c)); } catch (InterruptedException ignored) {
+                Thread.currentThread().interrupt();
+            }
+            // Ao sair do synchronized, liberta o lock. Não há notify aqui de propósito.
         }
     }
 
@@ -112,7 +118,6 @@ public class Servidor extends Tarefa {
     	/*
     	if (!bd.isRobotAberto()) { bloquear(); return; }
 
-        // 1) aguarda 1 comando (bloqueante)
         Comando c = buffer.removerElemento();
         
         executar(c);
@@ -120,7 +125,6 @@ public class Servidor extends Tarefa {
         System.out.println("[c/] Tempo de Execução: " + getTempoEspera(c));
         try { Thread.sleep(getTempoEspera(c)); } catch (InterruptedException ignored) {}
 
-        // 2) drena os restantes que já estejam disponíveis (sem dormir)
         while (buffer.ocupados() > 0) {
             c = buffer.removerElemento();
             
@@ -133,18 +137,13 @@ public class Servidor extends Tarefa {
     	
     	if (!bd.isRobotAberto()) { bloquear(); return; }
 
-
-        // 1) um comando (bloqueante)
+        // 1) 1 comando
         Comando c = buffer.removerElemento();
-        System.out.println("[EXEC] " + c.tipo + " | P1: " + c.p1 + " | P2: " + c.p2);
-        System.out.println("[c/] Tempo de Execução: " + getTempoEspera(c));
         executarComExclusao(c);
 
-        // 2) drena restantes disponíveis (cada um protegido pelo monitor)
+        // 2) drenar restantes (cada um protegido)
         while (buffer.ocupados() > 0) {
             c = buffer.removerElemento();
-            System.out.println("[EXEC] " + c.tipo + " | P1: " + c.p1 + " | P2: " + c.p2);
-            System.out.println("[c/] Tempo de Execução: " + getTempoEspera(c));
             executarComExclusao(c);
         }
     }
