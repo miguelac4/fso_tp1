@@ -39,7 +39,7 @@ public class RobotLegoEV3SIM extends RobotLegoEV3 {
          // TODO Send the command to Console
             return; 
         }
-        log.accept("Reta(Frente, " + distancia + " cm)");
+        //log.accept("Reta(Frente, " + distancia + " cm)");
         dormir(Math.abs(distancia) * MS_POR_CM);
     }
 
@@ -48,35 +48,35 @@ public class RobotLegoEV3SIM extends RobotLegoEV3 {
             log.accept("O comando 'Tras' foi ignorado (robot OFF)"); 
             return; 
         }
-        log.accept("Reta(Trás, " + distancia + " cm)");
+        //log.accept("Reta(Trás, " + distancia + " cm)");
         dormir(Math.abs(distancia) * MS_POR_CM);
     }
 
     @Override
     public void CurvarEsquerda(int raio, int angulo) {
         if (!ligado) { log.accept("O comando 'CurvarEsquerda' foi ignorado (robot OFF)"); return; }
-        log.accept("CurvarEsquerda(raio=" + raio + ", ang=" + angulo + ")");
+        //log.accept("CurvarEsquerda(raio=" + raio + ", ang=" + angulo + ")");
         dormir((int)(raio * MS_POR_CM * 0.5 + Math.abs(angulo) * MS_POR_GRAU));
     }
 
     @Override
     public void CurvarDireita(int raio, int angulo) {
         if (!ligado) { log.accept("O comando 'CurvarDireita' foi ignorado (robot OFF)"); return; }
-        log.accept("CurvarDireita(raio=" + raio + ", ang=" + angulo + ")");
+        //log.accept("CurvarDireita(raio=" + raio + ", ang=" + angulo + ")");
         dormir((int)(raio * MS_POR_CM * 0.5 + Math.abs(angulo) * MS_POR_GRAU));
     }
 
     @Override
     public void Parar(boolean imediato) {
         if (!ligado) { log.accept("O comando 'Parar' foi ignorado (robot OFF)"); return; }
-        log.accept("Parar(imediato=" + imediato + ")");
+        //log.accept("Parar(imediato=" + imediato + ")");
         if (!imediato) dormir(1000);
     }
     
     @Override
     public int SensorToque(int sensor) {
         if (!ligado) {
-            log.accept("SensorToque(" + sensor + ") -> robot OFF, devolve 0");
+            //log.accept("SensorToque(" + sensor + ") -> robot OFF, devolve 0");
             return 0;
         }
 

@@ -103,11 +103,10 @@ public class Servidor extends Tarefa {
     
     // Exclusão Mutua entre Servidor - EvitarObstaculo
     private void executarComExclusao(Comando c) {
-    	RobotLegoEV3 robot = bd.getRobot();
-        synchronized (robot) {
+        synchronized (this.robot) {
             // Se Evitar pediu prioridade, Servidor espera
             while (bd.prioridadeEvitar) {
-                try { robot.wait(); } catch (InterruptedException ie) {
+                try { this.robot.wait(); } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
                     return;
                 }

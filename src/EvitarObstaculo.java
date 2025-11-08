@@ -17,10 +17,12 @@ public class EvitarObstaculo extends Tarefa{
 		log.accept("______EVITAR OBSTACULO______");
 		robot.Parar(true);
 		log.accept("Parar(imediato= true)");
+		
 		robot.Reta(-20);
 		log.accept("Reta( -20 cm)");
 		// Fazer sleep para executar o Reta, tempo calculado com as funções do tp1
 		try { Thread.sleep(1100); } catch (InterruptedException ignored) {} 
+		
 		if (Math.random() < 0.5) {
 		    robot.CurvarEsquerda(1, 90);
 		    log.accept("CurvarEsquerda(raio= 1, ang= 90 ");
@@ -35,6 +37,7 @@ public class EvitarObstaculo extends Tarefa{
 		log.accept("______PAROU EVITAR______");
 	}
 
+	/*
 	@Override
 	protected void execucao() {
 		if (!bd.isRobotAberto()) { bloquear(); return; }
@@ -56,4 +59,37 @@ public class EvitarObstaculo extends Tarefa{
 	        }
 	    }
 	}
+	*/
+	
+	// Nova versao com o sensor toque dentro da exlusao mutua tambem
+	@Override
+    protected void execucao() {
+        if (!bd.isRobotAberto()) { bloquear(); return; }
+
+        boolean choque;
+        synchronized (robot) {
+        	// Verificar dentro da exclusao mutua se o robot colidiu
+            choque = (robot.SensorToque(robot.S_1) == 1);
+            if (choque) {
+                // Editar da pd que o robot colidiu
+                bd.prioridadeEvitar = true;
+            }
+            // Caso nao colida sai do syncronize para o robot poder usar outras threads
+            if (!choque) return;
+        }
+
+        synchronized (robot) {
+            try {
+            	// verificar caso nao tenha alterado o estado de novo
+                if (robot.SensorToque(robot.S_1) == 1) {
+                    // enquanto evitar decorre, mantemos o lock
+                    ExecutarEvitar();
+                }
+            } finally {
+                // limpar prioridade e acordar as que estiverem à espera
+                bd.prioridadeEvitar = false;
+                robot.notifyAll();
+            }
+        }
+    }
 }

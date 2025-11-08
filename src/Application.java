@@ -16,7 +16,7 @@ public class Application {
         // DESCOMENTAR PARA USAR SIMULAÇÃO
         RobotLegoEV3SIM simRobot = new RobotLegoEV3SIM(guiSim.getLogger());
         guiSim.setSimularEvitarCallback(() -> evitarObst.ExecutarEvitar());
-        //bd.setRobot(simRobot);
+        bd.setRobot(simRobot);
 
         buffer = new BufferCircular();
         produtor  = new MovimentoAleatorio(buffer, bd);
