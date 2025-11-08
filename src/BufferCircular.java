@@ -94,8 +94,8 @@ public class BufferCircular {
     	    } finally {
     	        acessoElemento.release();
     	        elementosLivres.release();
-    	        System.out.println("[BUFFER] Removido (" + comando.tipo + "). Ocupados: "
-    	                + elementosOcupados.availablePermits() + "/" + dimensaoBuffer);
+    	        //System.out.println("[BUFFER] Removido (" + comando.tipo + "). Ocupados: "
+    	        //        + elementosOcupados.availablePermits() + "/" + dimensaoBuffer);
 
     	        if (elementosOcupados.availablePermits() == 0) {
     	            System.out.println("[BUFFER] (Vazio após consumir tudo)");

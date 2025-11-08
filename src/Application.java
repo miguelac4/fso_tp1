@@ -21,8 +21,8 @@ public class Application {
         buffer = new BufferCircular();
         produtor  = new MovimentoAleatorio(buffer, bd);
         
-        consumidor = new Servidor(buffer, bd, bd.getRobot());
-        evitarObst = new EvitarObstaculo(bd, bd.getRobot());
+        consumidor = new Servidor(buffer, bd, bd.getRobot(), guiSim.getLogger());
+        evitarObst = new EvitarObstaculo(bd, bd.getRobot(), guiSim.getLogger());
         
 
         produtor.start();
