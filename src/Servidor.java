@@ -104,46 +104,17 @@ public class Servidor extends Tarefa {
     // Exclusão Mutua entre Servidor - EvitarObstaculo
     private void executarComExclusao(Comando c) {
         synchronized (this.robot) {
-            // Se Evitar pediu prioridade, Servidor espera
-//            while (bd.prioridadeEvitar) {
-//                try { this.robot.wait(); } catch (InterruptedException ie) {
-//                    Thread.currentThread().interrupt();
-//                    return;
-//                }
-//            }
 
-            // Enviar o comando e aguardar a sua duração COM o lock
+        	// Executar comandos do buffer a partir da tarefa de consumo
             executar(c);
-//            try { Thread.sleep(getTempoEspera(c)); } catch (InterruptedException ignored) {
-//                Thread.currentThread().interrupt();
-//            }
-            // Ao sair do synchronized, liberta o lock. Não há notify aqui de propósito.
+
         }
     }
 
 
     @Override
     protected void execucao() {
-    	/*
-    	if (!bd.isRobotAberto()) { bloquear(); return; }
-
-        Comando c = buffer.removerElemento();
-        
-        executar(c);
-        System.out.println("[EXEC] " + c.tipo + " | P1: " + c.p1 + " | P2: " + c.p2);
-        System.out.println("[c/] Tempo de Execução: " + getTempoEspera(c));
-        try { Thread.sleep(getTempoEspera(c)); } catch (InterruptedException ignored) {}
-
-        while (buffer.ocupados() > 0) {
-            c = buffer.removerElemento();
-            
-            executar(c);
-            System.out.println("[EXEC] " + c.tipo + " | P1: " + c.p1 + " | P2: " + c.p2);
-            System.out.println("[c/] Tempo de Execução: " + getTempoEspera(c));
-            try { Thread.sleep(getTempoEspera(c)); } catch (InterruptedException ignored) {}
-        }
-        */
-    	
+    	// Verificar se o robot está aberto
     	if (!bd.isRobotAberto()) { bloquear(); return; }
 
         // 1) 1 comando

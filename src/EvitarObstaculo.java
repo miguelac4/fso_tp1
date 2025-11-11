@@ -77,28 +77,18 @@ public class EvitarObstaculo extends Tarefa{
 	// Nova versao com o sensor toque dentro da exlusao mutua tambem
 	@Override
     protected void execucao() {
+		// Verificar se o robot está aberto
         if (!bd.isRobotAberto()) { bloquear(); return; }
         
+        // Dormir 50 milisegundos para poder aceder a outra tarefa
         dormir();
 
-//        boolean choque;
-//        synchronized (robot) {
-//        	// Verificar dentro da exclusao mutua se o robot colidiu
-//            choque = (robot.SensorToque(robot.S_1) == 1);
-//            if (choque) {
-//                // Editar da pd que o robot colidiu
-//                bd.prioridadeEvitar = true;
-//            }
-//            // Caso nao colida sai do syncronize para o robot poder usar outras threads
-//            if (!choque) return;
-//        }
-
         synchronized (robot) {
-            // verificar caso nao tenha alterado o estado de novo
+        	
+            // verificar caso nao tenha alterado o estado
             if (robot.SensorToque(robot.S_1) == 1) {
                 	
-                	
-            	// enquanto evitar decorre, mantemos o lock
+            	// executar evitar
             	ExecutarEvitar();
             }
         }
