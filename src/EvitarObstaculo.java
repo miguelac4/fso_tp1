@@ -13,7 +13,7 @@ public class EvitarObstaculo extends Tarefa{
 		this.log = (logger != null) ? logger : System.out::println;
 	}
 	
-	public void ExecutarEvitar() {
+	private void ExecutarEvitar() {
 		log.accept("______EVITAR OBSTACULO______");
 		robot.Parar(true);
 		log.accept("Parar(imediato= true)");
@@ -24,17 +24,30 @@ public class EvitarObstaculo extends Tarefa{
 		try { Thread.sleep(1100); } catch (InterruptedException ignored) {} 
 		
 		if (Math.random() < 0.5) {
-		    robot.CurvarEsquerda(1, 90);
-		    log.accept("CurvarEsquerda(raio= 1, ang= 90 ");
+		    robot.CurvarEsquerda(0, 90);
+		    log.accept("CurvarEsquerda(raio= 0, ang= 90)");
 		} else {
 			robot.CurvarDireita(1, 90);
-			log.accept("CurvarDireita(raio= 1, ang= 90 ");
+			log.accept("CurvarDireita(raio= 0, ang= 90)");
 		}
 		// Fazer sleep para executar o Curvar, tempo calculado com as funções do tp1
 		try { Thread.sleep(183); } catch (InterruptedException ignored) {} 
 		robot.Parar(false);
 		log.accept("Parar(imediato= false)");
 		log.accept("______PAROU EVITAR______");
+	}
+	
+	// chamado pelo botão "Simular Evitar"
+	public void simularEvitar() {
+	    synchronized (robot) {
+	        bd.prioridadeEvitar = true;
+	        try {
+	            ExecutarEvitar();
+	        } finally {
+	            bd.prioridadeEvitar = false;
+	            robot.notifyAll();
+	        }
+	    }
 	}
 
 	/*
@@ -65,31 +78,35 @@ public class EvitarObstaculo extends Tarefa{
 	@Override
     protected void execucao() {
         if (!bd.isRobotAberto()) { bloquear(); return; }
+        
+        dormir();
 
-        boolean choque;
-        synchronized (robot) {
-        	// Verificar dentro da exclusao mutua se o robot colidiu
-            choque = (robot.SensorToque(robot.S_1) == 1);
-            if (choque) {
-                // Editar da pd que o robot colidiu
-                bd.prioridadeEvitar = true;
-            }
-            // Caso nao colida sai do syncronize para o robot poder usar outras threads
-            if (!choque) return;
-        }
+//        boolean choque;
+//        synchronized (robot) {
+//        	// Verificar dentro da exclusao mutua se o robot colidiu
+//            choque = (robot.SensorToque(robot.S_1) == 1);
+//            if (choque) {
+//                // Editar da pd que o robot colidiu
+//                bd.prioridadeEvitar = true;
+//            }
+//            // Caso nao colida sai do syncronize para o robot poder usar outras threads
+//            if (!choque) return;
+//        }
 
         synchronized (robot) {
-            try {
-            	// verificar caso nao tenha alterado o estado de novo
-                if (robot.SensorToque(robot.S_1) == 1) {
-                    // enquanto evitar decorre, mantemos o lock
-                    ExecutarEvitar();
-                }
-            } finally {
-                // limpar prioridade e acordar as que estiverem à espera
-                bd.prioridadeEvitar = false;
-                robot.notifyAll();
+            // verificar caso nao tenha alterado o estado de novo
+            if (robot.SensorToque(robot.S_1) == 1) {
+                	
+                	
+            	// enquanto evitar decorre, mantemos o lock
+            	ExecutarEvitar();
             }
         }
+	}
+	
+	@Override
+    protected void dormir() {
+        try { Thread.sleep(50); } catch (InterruptedException ignored) {}
     }
 }
+
