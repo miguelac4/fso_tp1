@@ -105,18 +105,18 @@ public class Servidor extends Tarefa {
     private void executarComExclusao(Comando c) {
         synchronized (this.robot) {
             // Se Evitar pediu prioridade, Servidor espera
-            while (bd.prioridadeEvitar) {
-                try { this.robot.wait(); } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    return;
-                }
-            }
+//            while (bd.prioridadeEvitar) {
+//                try { this.robot.wait(); } catch (InterruptedException ie) {
+//                    Thread.currentThread().interrupt();
+//                    return;
+//                }
+//            }
 
             // Enviar o comando e aguardar a sua duração COM o lock
             executar(c);
-            try { Thread.sleep(getTempoEspera(c)); } catch (InterruptedException ignored) {
-                Thread.currentThread().interrupt();
-            }
+//            try { Thread.sleep(getTempoEspera(c)); } catch (InterruptedException ignored) {
+//                Thread.currentThread().interrupt();
+//            }
             // Ao sair do synchronized, liberta o lock. Não há notify aqui de propósito.
         }
     }
