@@ -18,6 +18,16 @@ public class Comando {
         this.p1 = comando.p1;
         this.p2 = comando.p2;
 	}
+    
+    // Método ToString para retornar logs do conteudo de cada comando
+    @Override
+    public String toString() {
+        return "Comando{" +
+                "tipo=" + tipo +
+                ", p1=" + p1 +
+                ", p2=" + p2 +
+                '}';
+    }
 
 	// Fábricas estáticas para maior clareza
     public static Comando retaFrente(int dist) {

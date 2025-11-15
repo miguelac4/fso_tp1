@@ -28,6 +28,13 @@ public class BufferCircular {
     	acessoElemento = new Semaphore(1);
     }
     
+    // Método ToString para retornar logs do conteudo do buffer
+    @Override
+    public String toString() {
+        // isto imprime o array completo, incluindo nulls
+        return Arrays.toString(bufferCircular);
+    }
+    
     // Função para limpar buffer e usar na GUI
     public void clearBuffer() {
         try {

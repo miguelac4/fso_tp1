@@ -3,8 +3,10 @@ import java.util.function.Consumer;
 public class Servidor extends Tarefa {
     
 	private BufferCircular buffer;
+	private BufferCircular bufferGravador;
     private RobotLegoEV3 robot;
     private final BaseDados bd;
+    private final BaseDadosGravador bdG;
     
     private final Consumer<String> log;
 
@@ -12,10 +14,12 @@ public class Servidor extends Tarefa {
      * Classe Consumidora
      * Executa os comandos no Robot
      */
-    public Servidor(BufferCircular buffer, BaseDados bd, RobotLegoEV3 robot, Consumer<String> logger) {
+    public Servidor(BufferCircular buffer, BufferCircular bufferGravador, BaseDados bd, BaseDadosGravador bdG, RobotLegoEV3 robot, Consumer<String> logger) {
     	super();
     	this.bd = bd;
+    	this.bdG = bdG;
         this.buffer = buffer;
+        this.bufferGravador = bufferGravador;
         this.robot = robot;
         this.log = (logger != null) ? logger : System.out::println;
     }
@@ -23,26 +27,56 @@ public class Servidor extends Tarefa {
     // Métodos separados (bons para depuração e modularidade)
     public void Reta(int distancia) {
         robot.Reta(distancia);
+        
+        if(bdG.getIsRecording() == true) {
+			// Gravar no buffer de gravação
+        	bufferGravador.inserirElemento(Comando.retaFrente(distancia));
+		}
+		
         log.accept("Reta(" + distancia + " cm)");
     }
 
     public void CurvarDireita(int raio, int angulo) {
         robot.CurvarDireita(raio, angulo);
+        
+        if(bdG.getIsRecording() == true) {
+			// Gravar no buffer de gravação
+        	bufferGravador.inserirElemento(Comando.curvaDir(raio, angulo));
+		}
+		
         log.accept("CurvarDireita(raio=" + raio + ", ang=" + angulo + ")");
     }
 
     public void CurvarEsquerda(int raio, int angulo) {
         robot.CurvarEsquerda(raio, angulo);
+        
+        if(bdG.getIsRecording() == true) {
+			// Gravar no buffer de gravação
+        	bufferGravador.inserirElemento(Comando.curvaEsq(raio, angulo));
+		}
+		
         log.accept("CurvarEsquerda(raio=" + raio + ", ang=" + angulo + ")");
     }
 
     public void Parar() {
         robot.Parar(false);
+        
+        if(bdG.getIsRecording() == true) {
+        	// Gravar no buffer de gravação
+        	bufferGravador.inserirElemento(Comando.parar());
+		}
+		
         log.accept("Parar(imediato= false)");
     }
     
     public void PararForce() {
     	robot.Parar(true);
+    	
+    	if(bdG.getIsRecording() == true) {
+    		// Gravar no buffer de gravação
+        	bufferGravador.inserirElemento(Comando.pararForce());
+		}
+			
     	log.accept("Parar(imediato= true)");
     }
 
@@ -117,7 +151,6 @@ public class Servidor extends Tarefa {
     	// Verificar se o robot está aberto
     	if (!bd.isRobotAberto()) { bloquear(); return; }
 
-        // 1) 1 comando
         Comando c = buffer.removerElemento();
         executarComExclusao(c);
 
