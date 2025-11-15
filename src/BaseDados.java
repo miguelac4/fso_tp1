@@ -7,20 +7,16 @@ public class BaseDados {
     private int raio;
     private int spinnerNum;
     private String nomeRobot = "EVA";
-    public volatile boolean prioridadeEvitar = false; // flag de prioridade
 
     public BaseDados() {
         terminar = false;
         robotAberto = false;
         
         // DESCOMENTAR PARA USAR SIMULAÇÃO
-        robot = new RobotLegoEV3();
-        //robot = new RobotLegoEV3SIM(mensagem -> System.out.println(mensagem));
+        //robot = new RobotLegoEV3();
+        robot = new RobotLegoEV3SIM(mensagem -> System.out.println(mensagem));
         
         spinnerNum = 0;
-        //distancia = 0;
-        //angulo = 0;
-        //raio = 0;
     }
   
 
@@ -54,4 +50,5 @@ public class BaseDados {
     public int getSpinnerNum() {
     	return spinnerNum;
     }	
+    
 }

@@ -1,17 +1,26 @@
 public class Application {
 	private GUI gui;
 	private ConsoleSIMGUI guiSim;
+	private GUIGravador guiGravador;
 	private MovimentoAleatorio produtor;
 	private Servidor consumidor;
     private BufferCircular buffer;
+    private BufferCircular bufferGravador;
     private BaseDados bd;
+    private BaseDadosGravador bdG;
     private EvitarObstaculo evitarObst;
    
 	
 	public Application() {
 		gui = new GUI();
 		guiSim = new ConsoleSIMGUI();
+		
+		bdG = new BaseDadosGravador();
+		
+
         bd = gui.getBD();
+        
+        
         
         // DESCOMENTAR PARA USAR SIMULAÇÃO
         //RobotLegoEV3SIM simRobot = new RobotLegoEV3SIM(guiSim.getLogger());
@@ -19,10 +28,13 @@ public class Application {
         //bd.setRobot(simRobot);
 
         buffer = new BufferCircular();
+        bufferGravador = new BufferCircular();
         produtor  = new MovimentoAleatorio(buffer, bd);
         
-        consumidor = new Servidor(buffer, bd, bd.getRobot(), guiSim.getLogger());
-        evitarObst = new EvitarObstaculo(bd, bd.getRobot(), guiSim.getLogger());
+        guiGravador = new GUIGravador(bdG, bufferGravador);
+        
+        consumidor = new Servidor(buffer, bufferGravador, bd, bdG, bd.getRobot(), guiSim.getLogger());
+        evitarObst = new EvitarObstaculo(bd, bdG, bufferGravador, bd.getRobot(), guiSim.getLogger());
         
 
         produtor.start();
@@ -37,6 +49,13 @@ public class Application {
 		
 		System.out.println("A aplicação começou.");
 		while (!gui.getBD().isTerminar()) {
+			
+			// Log para ver conteudo do BufferGravador
+			//System.out.println(bufferGravador);
+			
+			// Log para ver boolean isRecording
+			System.out.println(bdG.getIsRecording());
+			
 			evitarObst.desbloquear();
 			try {
 				Thread.sleep(100);
