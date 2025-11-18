@@ -208,17 +208,16 @@ public class GUIGravador extends JFrame {
     public JTextArea getConsole()         { return console; }
     
     private void gravarBufferParaFicheiro() {
-        // nome do ficheiro com data e hora
         LocalDateTime agora = LocalDateTime.now();
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
         String nomeFicheiro = fmt.format(agora) + ".txt";
 
         try (PrintWriter out = new PrintWriter(new FileWriter(nomeFicheiro))) {
 
-            // enquanto houver comandos no bufferGravador
-            while (bufferGravador.ocupados() > 0) {
-                Comando c = bufferGravador.removerElemento();  // limpar o buffer
+            int n = bufferGravador.ocupados();   // snapshot na altura do clique
 
+            for (int i = 0; i < n; i++) {
+                Comando c = bufferGravador.removerElemento();
                 String linha = comandoParaLinha(c);
                 out.println(linha);
             }
@@ -227,8 +226,12 @@ public class GUIGravador extends JFrame {
 
         } catch (IOException ex) {
             appendToConsole("Erro a escrever ficheiro: " + ex.getMessage());
+        } finally {
+            // garante que tudo fica mesmo limpo e semáforos resetados
+            bufferGravador.clearBuffer();
         }
     }
+
     
     private String comandoParaLinha(Comando c) {
         switch (c.tipo) {

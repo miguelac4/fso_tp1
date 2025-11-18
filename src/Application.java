@@ -51,10 +51,10 @@ public class Application {
 		while (!gui.getBD().isTerminar()) {
 			
 			// Log para ver conteudo do BufferGravador
-			//System.out.println(bufferGravador);
+			System.out.println(bufferGravador);
 			
 			// Log para ver boolean isRecording
-			System.out.println(bdG.getIsRecording());
+			//System.out.println(bdG.getIsRecording());
 			
 			evitarObst.desbloquear();
 			try {

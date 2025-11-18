@@ -77,7 +77,7 @@ public class Servidor extends Tarefa {
         	bufferGravador.inserirElemento(Comando.pararForce());
 		}
 			
-    	log.accept("Parar(imediato= true)");
+    	//log.accept("Parar(imediato= true)");
     }
 
     // Método principal do consumidor (executa o comando retirado do buffer)
@@ -141,6 +141,8 @@ public class Servidor extends Tarefa {
 
         	// Executar comandos do buffer a partir da tarefa de consumo
             executar(c);
+            
+            
 
         }
     }
@@ -153,6 +155,7 @@ public class Servidor extends Tarefa {
 
         Comando c = buffer.removerElemento();
         executarComExclusao(c);
+        
 
         // 2) drenar restantes (cada um protegido)
         while (buffer.ocupados() > 0) {
