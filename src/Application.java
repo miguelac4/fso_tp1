@@ -9,6 +9,8 @@ public class Application {
     private BaseDados bd;
     private BaseDadosGravador bdG;
     private EvitarObstaculo evitarObst;
+    private Gravar gravar;
+    private Reproduzir reproduzir;
    
 	
 	public Application() {
@@ -31,7 +33,10 @@ public class Application {
         bufferGravador = new BufferCircular();
         produtor  = new MovimentoAleatorio(buffer, bd);
         
-        guiGravador = new GUIGravador(bdG, bufferGravador);
+        gravar = new Gravar(buffer, bufferGravador, bd,bdG, bd.getRobot(), guiSim.getLogger());
+        reproduzir = new Reproduzir(buffer, bdG, guiSim.getLogger());
+        
+        guiGravador = new GUIGravador(bd, bdG, bufferGravador, gravar, reproduzir);
         
         consumidor = new Servidor(buffer, bufferGravador, bd, bdG, bd.getRobot(), guiSim.getLogger());
         evitarObst = new EvitarObstaculo(bd, bdG, bufferGravador, bd.getRobot(), guiSim.getLogger());
@@ -40,6 +45,8 @@ public class Application {
         produtor.start();
         consumidor.start();
         evitarObst.start();
+        gravar.start();
+        reproduzir.start();
         
         gui.setTarefas(produtor, consumidor);
         gui.setBuffer(buffer);
@@ -49,12 +56,22 @@ public class Application {
 		
 		System.out.println("A aplicação começou.");
 		while (!gui.getBD().isTerminar()) {
+			System.out.println("test");
+			if(bdG.getIsRecording() == true) {
+				gravar.desbloquear();
+				System.out.println("test1");
+			} else {
+				gravar.bloquear();
+				System.out.println("test2");
+			}
+			
 			
 			// Log para ver conteudo do BufferGravador
 			System.out.println(bufferGravador);
+		
 			
 			// Log para ver boolean isRecording
-			//System.out.println(bdG.getIsRecording());
+			System.out.println(bdG.getIsRecording());
 			
 			evitarObst.desbloquear();
 			try {
