@@ -13,8 +13,8 @@ public class BaseDados {
         robotAberto = false;
         
         // DESCOMENTAR PARA USAR SIMULAÇÃO
-        //robot = new RobotLegoEV3();
-        robot = new RobotLegoEV3SIM(mensagem -> System.out.println(mensagem));
+        robot = new RobotLegoEV3();
+        //robot = new RobotLegoEV3SIM(mensagem -> System.out.println(mensagem));
         
         spinnerNum = 0;
     }

@@ -18,11 +18,11 @@ public abstract class Tarefa extends Thread{
 	
 	
 	public void bloquear() {
-		//sem.drainPermits();
+		sem.drainPermits(); // Tirar unidades
 		estado = BLOQUEADO;
-		try {
+		/*try {
 			sem.acquire();
-		} catch (InterruptedException e) {e.printStackTrace();}
+		} catch (InterruptedException e) {e.printStackTrace();}*/
 	}
 	
 	private void esperaTrabalho() {
